@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СтопГПТ — Детектор ИИ-текстов и проверка оригинальности</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0d;--ink2:#444;--ink3:#888;--ink4:#bbb;
+  --bg:#fafafa;--white:#fff;
+  --border:#e8e8e8;--border2:#d4d4d4;
+  --accent:#2563eb;--accent2:#1d4ed8;--accent-bg:#eff6ff;
+  --green:#16a34a;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --r:10px;--rs:7px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Instrument Sans',sans-serif;background:transparent;color:var(--ink);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+.grad-bg{position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;background:radial-gradient(ellipse 70% 55% at 10% 0%,rgba(173,204,255,0.52) 0%,transparent 58%),radial-gradient(ellipse 65% 50% at 90% 5%,rgba(255,180,215,0.45) 0%,transparent 55%),radial-gradient(ellipse 55% 40% at 50% 100%,rgba(195,215,255,0.25) 0%,transparent 60%),#f5f5fb;}
+
+header{background:rgba(255,255,255,0.75);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,0.07);position:sticky;top:0;z-index:100}
+.hdr{max-width:1200px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center}
+.logo{display:flex;align-items:baseline;gap:2px;text-decoration:none}
+.logo-stop{font-family:'Instrument Serif',serif;font-size:22px;font-style:italic;color:var(--ink)}
+.logo-gpt{font-family:'Instrument Sans',sans-serif;font-size:22px;font-weight:700;color:var(--accent);letter-spacing:-.5px}
+.logo-dot{font-size:22px;color:var(--ink3)}
+.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+
+.hero{background:transparent;border-bottom:1px solid rgba(0,0,0,0.06);padding:72px 32px 80px}
+.hero-inner{max-width:1200px;margin:0 auto}
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;background:var(--accent-bg);border:1px solid #bfdbfe;border-radius:100px;padding:5px 14px;font-size:13px;font-weight:600;color:var(--accent);margin-bottom:28px}
+.hero-kicker-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(42px,5.5vw,72px);font-weight:400;line-height:1.06;letter-spacing:-1.5px;color:var(--ink);margin-bottom:22px;max-width:700px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:18px;color:var(--ink2);max-width:580px;margin-bottom:36px;line-height:1.6}
+.hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:48px}
+.btn-hp{padding:13px 28px;background:var(--ink);color:var(--white);border:none;border-radius:var(--r);font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:background .15s,transform .15s}
+.btn-hp:hover{background:#222;transform:translateY(-1px)}
+.btn-hs{padding:13px 24px;background:transparent;color:var(--ink);border:1.5px solid var(--border2);border-radius:var(--r);font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;transition:border-color .15s}
+.btn-hs:hover{border-color:var(--ink)}
+.hero-stats{display:flex;gap:48px;flex-wrap:wrap}
+.hst{border-left:2px solid var(--border);padding-left:20px}
+.hst-num{font-family:'Instrument Serif',serif;font-size:32px;font-style:italic;color:var(--ink);line-height:1}
+.hst-lbl{font-size:13px;color:var(--ink3);margin-top:3px;font-weight:500}
+
+.checker-section{max-width:1200px;margin:0 auto;padding:56px 32px;background:transparent}
+.sec-lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:20px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+
+.panel{background:rgba(255,255,255,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.09);border-radius:16px;overflow:hidden}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.panel-title{font-size:14px;font-weight:600;color:var(--ink)}
+.panel-tabs{display:flex;gap:2px;background:#f5f5f5;border-radius:7px;padding:3px}
+.ptab{padding:5px 14px;border-radius:5px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--ink2);cursor:pointer;transition:all .12s}
+.ptab.on{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+textarea#userText{width:100%;min-height:300px;padding:20px;border:none;font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.75;color:var(--ink);background:transparent;resize:vertical;outline:none}
+textarea#userText::placeholder{color:var(--ink4)}
+
+#filezone{display:none;padding:48px 24px;text-align:center;cursor:pointer;transition:background .15s;border-top:1px dashed var(--border2)}
+#filezone:hover,#filezone.drag{background:#f8f8f8}
+.fz-icon{font-size:36px;margin-bottom:10px}
+.fz-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.fz-sub{font-size:13px;color:var(--ink3)}
+.fz-chosen{font-size:13px;color:var(--green);font-weight:600;margin-top:8px}
+
+.panel-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.char-info{font-size:12px;color:var(--ink3);font-weight:500;display:flex;align-items:center;gap:8px}
+.cbar{width:80px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.cbar-f{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+.foot-r{margin-left:auto;display:flex;gap:8px}
+.btn-check{padding:9px 22px;background:var(--accent);color:var(--white);border:none;border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.btn-check:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-check:disabled{background:#9ca3af;box-shadow:none;cursor:not-allowed;transform:none}
+.btn-sm{padding:9px 16px;background:transparent;color:var(--ink2);border:1px solid var(--border2);border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
+.btn-sm:hover{background:var(--bg);border-color:var(--ink)}
+.btn-sm.danger:hover{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+
+.bspin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.result-panel{background:rgba(255,255,255,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.09);border-radius:16px;overflow:hidden;min-height:400px}
+.rp-empty{padding:60px 24px;text-align:center;color:var(--ink3)}
+.rp-empty-icon{font-size:44px;margin-bottom:14px;opacity:.35}
+.rp-empty-txt{font-size:15px;font-weight:500}
+.rp-empty-sub{font-size:13px;margin-top:6px;color:var(--ink4)}
+
+.rp-progress{padding:32px 24px;display:none}
+.rp-progress.on{display:block}
+.prog-title{font-size:14px;font-weight:600;margin-bottom:14px}
+.prog-bar-o{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:20px}
+.prog-bar-i{height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed);border-radius:2px;animation:progani 2.5s ease-in-out infinite}
+@keyframes progani{0%{width:5%}50%{width:70%}100%{width:90%}}
+.prog-steps{display:flex;flex-direction:column;gap:12px}
+.pstep{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink3);font-weight:500;transition:color .3s}
+.pstep.on{color:var(--accent);font-weight:600}
+.pstep.done{color:var(--green)}
+.pstep-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background .3s;flex-shrink:0}
+.pstep.on .pstep-dot{background:var(--accent);animation:pulse 1s ease-in-out infinite}
+.pstep.done .pstep-dot{background:var(--green)}
+.pstep-n{font-size:11px;font-family:monospace;min-width:20px}
+
+.rp-error{padding:20px 24px;display:none}
+.rp-error.on{display:block}
+.err-card{background:var(--red-bg);border:1px solid rgba(220,38,38,.2);border-radius:var(--rs);padding:14px 16px;font-size:14px;color:var(--red);font-weight:500;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+
+.rp-results{display:none}
+.rp-results.on{display:block}
+/* rp-rhead moved to new css */
+.rp-rtitle{font-size:14px;font-weight:600}
+.verdict-tag{padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700}
+
+.score-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border)}
+.sc{padding:18px 16px;border-right:1px solid var(--border);text-align:center}
+.sc:last-child{border-right:none}
+.sc-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin-bottom:8px}
+.sc-num{font-family:'Instrument Serif',serif;font-size:40px;font-style:italic;line-height:1;margin-bottom:8px;letter-spacing:-1px}
+.sc-num.g{color:var(--green)}.sc-num.r{color:var(--red)}.sc-num.a{color:var(--amber)}.sc-num.b{color:var(--accent)}
+.scbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.scbar-f{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bf-g{background:var(--green)}.bf-r{background:var(--red)}.bf-a{background:var(--amber)}.bf-b{background:var(--accent)}
+.sc-desc{font-size:11px;color:var(--ink3);margin-top:6px;font-weight:500}
+
+.rp-txt-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
+.rp-sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.legend{display:flex;gap:12px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);font-weight:600}
+.leg-sw{width:16px;height:3px;border-radius:2px}
+.ls-ai{background:var(--red)}.ls-plag{background:var(--amber)}.ls-ok{background:var(--green)}
+.marked-text{font-size:14px;line-height:1.9;color:var(--ink)}
+.hl-ai{background:rgba(220,38,38,.08);border-bottom:2px solid var(--red);padding:1px 2px;border-radius:2px;cursor:help}
+.hl-plag{background:rgba(217,119,6,.08);border-bottom:2px solid var(--amber);padding:1px 2px;border-radius:2px;cursor:help}
+.hl-ok{background:rgba(22,163,74,.07);border-bottom:2px solid var(--green);padding:1px 2px;border-radius:2px}
+
+/* rp-details moved to new css */
+.detail-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.detail-item:last-child{border-bottom:none}
+.di-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:1px}
+.di-ai{background:var(--red-bg)}.di-plag{background:var(--amber-bg)}.di-ok{background:var(--green-bg)}.di-info{background:var(--accent-bg)}
+.di-title{font-size:13px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.di-body{font-size:13px;color:var(--ink2);line-height:1.5}
+.badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.bai{background:var(--red-bg);color:var(--red)}.bplag{background:var(--amber-bg);color:var(--amber)}.bok{background:var(--green-bg);color:var(--green)}
+
+.features-section{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 32px}
+.fs-inner{max-width:1200px;margin:0 auto}
+.fs-header{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-bottom:56px;align-items:end}
+.fs-h1{font-family:'Instrument Serif',serif;font-size:clamp(30px,4vw,46px);font-weight:400;line-height:1.1;letter-spacing:-.5px}
+.fs-h1 em{font-style:italic;color:var(--accent)}
+.fs-sub{font-size:16px;color:var(--ink2);line-height:1.6}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.feat{background:var(--white);padding:28px 24px;transition:background .15s}
+.feat:hover{background:#fafafa}
+.feat-num{font-family:'Instrument Serif',serif;font-size:48px;font-style:italic;color:var(--border2);line-height:1;margin-bottom:14px;letter-spacing:-1px}
+.feat-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.feat-body{font-size:14px;color:var(--ink2);line-height:1.55}
+
+.how-section{max-width:1200px;margin:0 auto;padding:72px 32px}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:32px}
+.how-step{padding:28px 22px;border-right:1px solid var(--border)}
+.how-step:last-child{border-right:none}
+.how-n{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin-bottom:14px}
+.how-icon{font-size:26px;margin-bottom:10px}
+.how-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.how-body{font-size:13px;color:var(--ink2);line-height:1.5}
+
+.pricing-section{background:var(--white);border-top:1px solid var(--border);padding:72px 32px}
+.pr-inner{max-width:1200px;margin:0 auto}
+.pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.pr-card{border:1px solid var(--border);border-radius:16px;padding:28px 22px;position:relative;transition:border-color .15s}
+.pr-card:hover{border-color:var(--border2)}
+.pr-card.feat{border-color:var(--ink);border-width:1.5px}
+.pr-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--white);padding:4px 14px;border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap}
+.pr-name{font-size:14px;font-weight:700;color:var(--ink2);margin-bottom:10px}
+.pr-price{font-family:'Instrument Serif',serif;font-size:52px;font-style:italic;color:var(--ink);line-height:1;letter-spacing:-2px}
+.pr-period{font-size:13px;color:var(--ink3);margin-top:4px;margin-bottom:20px;font-weight:500}
+.pr-feats{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:10px}
+.pr-feats li{font-size:13px;color:var(--ink2);display:flex;align-items:flex-start;gap:8px;font-weight:500;line-height:1.4}
+.chk{color:var(--green);flex-shrink:0}.no{color:var(--ink4);flex-shrink:0}
+.btn-pr{width:100%;padding:11px;border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid var(--border2);background:var(--white);color:var(--ink)}
+.btn-pr:hover{border-color:var(--ink)}
+.btn-pr.dark{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.btn-pr.dark:hover{background:#222}
+
+.faq-section{max-width:1200px;margin:0 auto;padding:72px 32px}
+.faq-list{margin-top:32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--white)}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{width:100%;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:600;cursor:pointer;background:none;border:none;font-family:'Instrument Sans',sans-serif;color:var(--ink);text-align:left;transition:background .12s}
+.faq-q:hover{background:#f9f9f9}
+.faq-arr{font-size:18px;color:var(--ink3);transition:transform .2s;flex-shrink:0;margin-left:12px}
+.faq-item.open .faq-arr{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s;font-size:14px;color:var(--ink2);line-height:1.65}
+.faq-item.open .faq-a{max-height:200px;padding:0 22px 18px}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(13,13,13,.5);z-index:500;backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:var(--white);border-radius:20px;padding:36px 32px;max-width:420px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.18);position:relative}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink3);padding:4px}
+.modal-close:hover{color:var(--ink)}
+.modal-kicker{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);margin-bottom:10px}
+.modal-title{font-family:'Instrument Serif',serif;font-size:28px;font-style:italic;margin-bottom:6px}
+.modal-sub{font-size:14px;color:var(--ink2);margin-bottom:22px;line-height:1.5}
+.modal-price-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:20px;display:flex;align-items:baseline;gap:4px}
+.modal-price{font-family:'Instrument Serif',serif;font-size:56px;font-style:italic;color:var(--ink);line-height:1;letter-spacing:-2px}
+.modal-price-cur{font-size:20px;font-weight:600;color:var(--ink2);align-self:flex-start;margin-top:10px}
+.modal-price-info{font-size:13px;color:var(--ink3);margin-left:8px;font-weight:500}
+.modal-feats{list-style:none;margin-bottom:22px;display:flex;flex-direction:column;gap:8px}
+.modal-feats li{font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;color:var(--ink2)}
+.modal-input{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--white);outline:none;margin-bottom:10px;transition:border-color .15s}
+.modal-input:focus{border-color:var(--ink)}
+.btn-pay{width:100%;padding:14px;background:var(--ink);color:var(--white);border:none;border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-pay:hover{background:#222}
+.modal-note{font-size:12px;color:var(--ink3);text-align:center;margin-top:12px}
+
+footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
+.foot-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot-logo{font-family:'Instrument Serif',serif;font-size:20px;font-style:italic;color:var(--white)}
+.foot-links{display:flex;gap:20px}
+.foot-links a{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;font-weight:500;transition:color .12s}
+.foot-links a:hover{color:rgba(255,255,255,.8)}
+.foot-copy{font-size:13px}
+
+@media(max-width:860px){.split{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .hdr{padding:0 16px}.hdr-nav a:not(.hdr-btn){display:none}
+  .hero{padding:48px 20px 56px}.hero-stats{gap:20px}
+  .checker-section,.features-section,.how-section,.pricing-section,.faq-section{padding:48px 16px}
+  .how-grid,.feat-grid{grid-template-columns:1fr}
+  .how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}
+  .pr-grid,.fs-header{grid-template-columns:1fr}
+  .score-row{grid-template-columns:1fr}
+  .sc{border-right:none;border-bottom:1px solid var(--border)}.sc:last-child{border-bottom:none}
+}
+
+.counter-banner{background:rgba(255,255,255,0.5);border-top:1px solid rgba(0,0,0,0.07);border-bottom:1px solid rgba(0,0,0,0.07);padding:12px 28px;text-align:center}
+.counter-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.counter-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+.counter-txt{font-size:14px;font-weight:600;color:var(--ink2)}
+.counter-num{font-family:'Instrument Serif',serif;font-size:20px;font-style:italic;color:var(--accent)}
+
+.hero-usp{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.6);border:1px solid rgba(37,99,235,.13);border-radius:var(--r);padding:12px 16px;font-size:14px;font-weight:500;color:var(--ink);margin-bottom:32px;max-width:600px;line-height:1.5}
+.hero-usp-icon{flex-shrink:0;font-size:18px;margin-top:1px}
+
+.mode-tabs{display:flex;gap:4px;margin-bottom:20px;background:#f0f0f0;border-radius:9px;padding:3px;width:fit-content}
+.mtab{padding:7px 18px;border-radius:7px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;border:none;background:transparent;color:var(--ink2);cursor:pointer;transition:all .15s}
+.mtab.on{background:white;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.09)}
+
+.teacher-drop{border:2px dashed var(--border2);border-radius:var(--r);padding:32px 24px;text-align:center;cursor:pointer;transition:all .15s;margin:16px}
+.teacher-drop:hover{border-color:var(--accent);background:#f8f8ff}
+.teacher-files{list-style:none;display:flex;flex-direction:column;gap:5px;padding:0 16px 12px}
+.teacher-file{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--bg);border-radius:var(--rs);font-size:12px}
+.teacher-file-name{font-weight:500;flex:1}
+.teacher-results{padding:18px}
+.tr-item{background:rgba(255,255,255,0.7);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px}
+.tr-name{font-size:13px;font-weight:700;margin-bottom:5px}
+.tr-scores{display:flex;gap:14px;flex-wrap:wrap}
+.tr-score{font-size:12px;font-weight:500}
+.tr-score span{font-weight:700}
+
+.rp-rhead{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.rp-rtitle{font-size:14px;font-weight:600}
+.rp-head-right{display:flex;align-items:center;gap:8px}
+.btn-pdf{padding:5px 12px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-pdf:hover{background:#222}
+
+.rp-details{padding:16px 20px;border-bottom:1px solid var(--border)}
+.rp-recs{padding:14px 20px}
+.rec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rec-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px}
+.btn-get-recs{padding:6px 14px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-get-recs:hover{background:#222}
+.rec-item{padding:9px 12px;background:var(--green-bg);border:1px solid rgba(22,163,74,.15);border-radius:var(--rs);font-size:13px;margin-bottom:6px;line-height:1.5}
+.rec-item:last-child{margin-bottom:0}
+
+.btn-lk{padding:7px 16px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;text-decoration:none}
+.btn-lk:hover{background:#222}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(13,13,13,.5);z-index:500;backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:var(--white);border-radius:20px;padding:36px 32px;max-width:420px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.18);position:relative}
+.modal-grad-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2563eb,#e85d9e);border-radius:20px 20px 0 0}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink3);padding:4px}
+.modal-close:hover{color:var(--ink)}
+.modal-kicker{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);margin-bottom:10px}
+.modal-title{font-family:'Instrument Serif',serif;font-size:26px;font-style:italic;margin-bottom:5px}
+.modal-sub{font-size:13px;color:var(--ink2);margin-bottom:18px;line-height:1.5}
+.modal-price-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:18px;display:flex;align-items:baseline;gap:3px}
+.modal-price{font-family:'Instrument Serif',serif;font-size:50px;font-style:italic;color:var(--ink);line-height:1;letter-spacing:-2px}
+.modal-price-cur{font-size:18px;font-weight:700;color:var(--ink2);align-self:flex-start;margin-top:8px}
+.modal-price-info{font-size:12px;color:var(--ink3);margin-left:7px;font-weight:500;line-height:1.4}
+.modal-feats{list-style:none;margin-bottom:18px;display:flex;flex-direction:column;gap:7px}
+.modal-feats li{font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;color:var(--ink2)}
+.modal-input{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--ink);background:white;outline:none;margin-bottom:9px;transition:border-color .15s}
+.modal-input:focus{border-color:var(--accent)}
+.btn-pay{width:100%;padding:13px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-pay:hover{background:#222}
+.modal-note{font-size:11px;color:var(--ink3);text-align:center;margin-top:10px}
+
+.auth-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:9px;border:none;background:none;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.auth-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.auth-form{display:flex;flex-direction:column;gap:9px}
+.auth-code-sent{text-align:center;padding:16px 0}
+.auth-code-emoji{font-size:36px;margin-bottom:8px}
+.auth-code-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.auth-code-sub{font-size:12px;color:var(--ink2)}
+
+.lk-modal{max-width:460px}
+.lk-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.lk-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#e85d9e);display:flex;align-items:center;justify-content:center;font-size:18px;color:white;font-weight:700;flex-shrink:0}
+.lk-name{font-size:15px;font-weight:700}
+.lk-email{font-size:12px;color:var(--ink3)}
+.lk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.lk-stat{background:var(--bg);border-radius:var(--rs);padding:10px;text-align:center}
+.lk-stat-num{font-family:'Instrument Serif',serif;font-size:22px;font-style:italic;color:var(--accent)}
+.lk-stat-lbl{font-size:10px;color:var(--ink3);font-weight:600;margin-top:2px}
+.lk-history{list-style:none}
+.lk-hist-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.lk-hist-item:last-child{border-bottom:none}
+.btn-logout{width:100%;padding:10px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink2);margin-top:14px;transition:all .15s}
+.btn-logout:hover{background:#fff5f5;color:var(--red);border-color:var(--red)}
+
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:300;flex-wrap:wrap;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
+.cookie-text{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.cookie-actions{display:flex;gap:8px;flex-shrink:0}
+.btn-cookie-ok{padding:8px 18px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.btn-cookie-more{padding:8px 14px;background:transparent;color:var(--ink2);border:1px solid var(--border2);border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer}
+
+.pr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px}
+.pr-old{font-size:11px;color:var(--ink4);text-decoration:line-through;margin-left:3px}
+@media(max-width:900px){.pr-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.pr-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .hdr{padding:0 16px}
+  .hero{padding:44px 16px 56px}.hero-stats{gap:20px}
+  .checker-section,.features-section,.how-section,.pricing-section,.faq-section{padding:40px 16px}
+  .how-grid{grid-template-columns:1fr}.feat-grid{grid-template-columns:1fr}
+  .how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}
+  .fs-header{grid-template-columns:1fr}
+  .split{grid-template-columns:1fr}
+  .score-row{grid-template-columns:1fr}
+  .sc{border-right:none;border-bottom:1px solid var(--border)}.sc:last-child{border-bottom:none}
+  .cookie-banner{padding:12px 16px}
+  .mode-tabs{flex-wrap:wrap}
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="grad-bg" aria-hidden="true"></div>
+<header>
+  <div class="hdr">
+    <a href="#" class="logo">
+      <span class="logo-stop">Стоп</span><span class="logo-gpt">ГПТ</span><span class="logo-dot">.ru</span>
+    </a>
+    <div class="hdr-right"><button class="btn-lk" onclick="showAuth(event)">👤 Личный кабинет</button></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker"><div class="hero-kicker-dot"></div>Работает на Claude AI · Точность 95% · Бесплатно до 150 символов</div>
+    <h1>Определяем <em>ИИ-текст</em><br>за 30 секунд</h1>
+    <p class="hero-sub">Написан ли этот текст ChatGPT, Gemini или Claude? СтопГПТ определяет это мгновенно — с подробным отчётом и разметкой по фрагментам.</p>
+    <div class="hero-usp"><span class="hero-usp-icon">✨</span><span>Первый детектор который не просто показывает процент — а объясняет в чём именно проблема в каждом фрагменте текста</span></div>
+    <div class="hero-actions">
+      <a href="#checker" class="btn-hp">Проверить бесплатно →</a>
+      <a href="#pricing" class="btn-hs">Посмотреть тарифы</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hst"><div class="hst-num">150</div><div class="hst-lbl">символов бесплатно</div></div>
+      <div class="hst"><div class="hst-num">100К</div><div class="hst-lbl">символов за проверку</div></div>
+      <div class="hst"><div class="hst-num">95%</div><div class="hst-lbl">точность детектора</div></div>
+      <div class="hst"><div class="hst-num">36₽</div><div class="hst-lbl">первая проверка</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="counter-banner">
+  <div class="counter-inner">
+    <div class="counter-dot"></div>
+    <div class="counter-txt">Уже</div>
+    <div class="counter-num" id="bigCount">47 293</div>
+    <div class="counter-txt">пользователей провели честную проверку на СтопГПТ</div>
+  </div>
+</div>
+
+<section class="checker-section" id="checker">
+  <div class="sec-lbl">Детектор ИИ и плагиата</div>
+
+  <div class="mode-tabs">
+    <button class="mtab on" id="mode-single" onclick="setCheckerMode('single')">📄 Одиночная проверка</button>
+    <button class="mtab" id="mode-teacher" onclick="setCheckerMode('teacher')">👨‍🏫 Режим преподавателя</button>
+  </div>
+
+  <div id="singleMode">
+    <div class="split">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Текст для проверки</div>
+          <div class="panel-tabs">
+            <button class="ptab on" id="imt-text" onclick="setMode('text')">Текст</button>
+            <button class="ptab" id="imt-file" onclick="setMode('file')">Файл</button>
+          </div>
+        </div>
+        <div>
+          <textarea id="userText" placeholder="Вставьте или введите текст здесь...&#10;&#10;Первые 150 символов — бесплатно." oninput="updateCount()"></textarea>
+          <div id="filezone" ondrop="onDrop(event)" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" onclick="document.getElementById('fi').click()">
+            <div class="fz-icon">📄</div>
+            <div class="fz-title">Перетащите файл или нажмите для выбора</div>
+            <div class="fz-sub">Поддерживаются: .txt, .html, .rtf</div>
+            <div class="fz-chosen" id="fzchosen"></div>
+            <input type="file" id="fi" accept=".txt,.html,.htm,.rtf" style="display:none" onchange="onFileChange(event)">
+          </div>
+        </div>
+        <div class="panel-foot">
+          <div class="char-info">
+            <span id="charCount">0</span> / 100 000
+            <div class="cbar"><div class="cbar-f" id="cbarF" style="width:0%"></div></div>
+          </div>
+          <div class="foot-r">
+            <button class="btn-sm" onclick="loadDemo()">Демо</button>
+            <button class="btn-sm danger" onclick="clearAll()">Очистить</button>
+            <button class="btn-check" id="checkBtn" onclick="runCheck()">
+              Проверить <div class="bspin" id="bspin"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-panel">
+        <div class="rp-empty" id="rpEmpty">
+          <div class="rp-empty-icon">🔍</div>
+          <div class="rp-empty-txt">Результат появится здесь</div>
+          <div class="rp-empty-sub">Вставьте текст и нажмите «Проверить»</div>
+        </div>
+        <div class="rp-progress" id="rpProgress">
+          <div class="prog-title">Анализируем текст...</div>
+          <div class="prog-bar-o"><div class="prog-bar-i"></div></div>
+          <div class="prog-steps">
+            <div class="pstep on" id="ps1"><div class="pstep-dot"></div><span class="pstep-n">01</span>Анализ структуры</div>
+            <div class="pstep" id="ps2"><div class="pstep-dot"></div><span class="pstep-n">02</span>Детектор ИИ-генерации</div>
+            <div class="pstep" id="ps3"><div class="pstep-dot"></div><span class="pstep-n">03</span>Оценка оригинальности</div>
+            <div class="pstep" id="ps4"><div class="pstep-dot"></div><span class="pstep-n">04</span>Формирование отчёта</div>
+          </div>
+        </div>
+        <div class="rp-error" id="rpError">
+          <div class="err-card"><span>⚠</span><span id="errMsg"></span></div>
+        </div>
+        <div class="rp-results" id="rpResults">
+          <div class="rp-rhead">
+            <div class="rp-rtitle">Отчёт о проверке</div>
+            <div class="rp-head-right">
+              <div class="verdict-tag" id="verdictTag"></div>
+              <button class="btn-pdf" onclick="downloadPDF()">📄 PDF</button>
+            </div>
+          </div>
+          <div class="score-row">
+            <div class="sc"><div class="sc-lbl">Оригинальность</div><div class="sc-num" id="origNum">—</div><div class="scbar"><div class="scbar-f" id="origFill" style="width:0%"></div></div><div class="sc-desc" id="origDesc">оценка уникальности</div></div>
+            <div class="sc"><div class="sc-lbl">Вероятность ИИ</div><div class="sc-num" id="aiNum">—</div><div class="scbar"><div class="scbar-f" id="aiFill" style="width:0%"></div></div><div class="sc-desc" id="aiDesc">признаки нейросети</div></div>
+            <div class="sc"><div class="sc-lbl">Читаемость</div><div class="sc-num b" id="readNum">—</div><div class="scbar"><div class="scbar-f bf-b" id="readFill" style="width:0%"></div></div><div class="sc-desc" id="readDesc">стиль и качество</div></div>
+          </div>
+          <div class="rp-txt-sec">
+            <div class="rp-sec-lbl">Разметка текста<div class="legend"><div class="leg"><div class="leg-sw ls-ai"></div>ИИ</div><div class="leg"><div class="leg-sw ls-plag"></div>Плагиат</div><div class="leg"><div class="leg-sw ls-ok"></div>Оригинал</div></div></div>
+            <div class="marked-text" id="markedText"></div>
+          </div>
+          <div class="rp-details" id="rpDetails"></div>
+          <div class="rp-recs">
+            <div class="rec-header">
+              <div class="rec-title">✏️ Рекомендации по улучшению</div>
+              <button class="btn-get-recs" id="recsBtn" onclick="getRecs()">Получить за 50₽</button>
+            </div>
+            <div id="recsContent" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="teacherMode" style="display:none">
+    <div class="panel" style="max-width:100%">
+      <div class="panel-head"><div class="panel-title">👨‍🏫 Режим преподавателя — массовая проверка работ</div></div>
+      <div class="teacher-drop" onclick="document.getElementById('tfi').click()" ondrop="onTeacherDrop(event)" ondragover="event.preventDefault()">
+        <div class="fz-icon">📚</div>
+        <div class="fz-title">Загрузите несколько файлов сразу</div>
+        <div class="fz-sub">Перетащите или нажмите · .txt файлы · до 50 работ</div>
+        <input type="file" id="tfi" accept=".txt" multiple style="display:none" onchange="onTeacherFiles(event)">
+      </div>
+      <ul class="teacher-files" id="teacherFileList"></ul>
+      <div class="panel-foot">
+        <div class="foot-r">
+          <button class="btn-check" id="teacherBtn" onclick="runTeacherCheck()" disabled>
+            Проверить все работы <div class="bspin" id="tSpin"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-results" id="teacherResults" style="display:none"></div>
+  </div>
+</section>
+
+<section class="features-section" id="features">
+  <div class="fs-inner">
+    <div class="fs-header">
+      <div><div class="sec-lbl">Возможности</div><h2 class="fs-h1">Всё что нужно для <em>проверки текста</em></h2></div>
+      <p class="fs-sub">СтопГПТ использует Claude AI для глубокого анализа — не просто процент, а подробное объяснение каждого фрагмента.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><div class="feat-num">01</div><div class="feat-title">Детектор ИИ-генерации</div><div class="feat-body">Определяем тексты от ChatGPT, Claude, Gemini, GigaChat, YandexGPT. Точность до 95%.</div></div>
+      <div class="feat"><div class="feat-num">02</div><div class="feat-title">Анализ оригинальности</div><div class="feat-body">Оцениваем уникальность фраз, выявляем шаблонные конструкции и признаки перефразирования.</div></div>
+      <div class="feat"><div class="feat-num">03</div><div class="feat-title">Разметка по фрагментам</div><div class="feat-body">Каждый участок подсвечивается отдельно: красный — ИИ, жёлтый — плагиат, зелёный — оригинал.</div></div>
+      <div class="feat"><div class="feat-num">04</div><div class="feat-title">До 100 000 символов</div><div class="feat-body">Проверяйте дипломные работы, статьи и книги целиком — без ограничений по объёму.</div></div>
+      <div class="feat"><div class="feat-num">05</div><div class="feat-title">Загрузка файлов</div><div class="feat-body">Загружайте .txt и .html файлы напрямую. Текст извлекается автоматически.</div></div>
+      <div class="feat"><div class="feat-num">06</div><div class="feat-title">Личный кабинет</div><div class="feat-body">История проверок, баланс, сохранённые результаты. Вход по email без пароля — просто код из письма.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="how-section">
+  <div class="sec-lbl">Как это работает</div>
+  <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,42px);font-weight:400;letter-spacing:-.5px;max-width:480px">Четыре шага до результата</h2>
+  <div class="how-grid">
+    <div class="how-step"><div class="how-n">Шаг 01</div><div class="how-icon">✍️</div><div class="how-title">Вставьте текст</div><div class="how-body">Вставьте или введите текст в поле слева, или загрузите .txt файл.</div></div>
+    <div class="how-step"><div class="how-n">Шаг 02</div><div class="how-icon">🔍</div><div class="how-title">Нажмите «Проверить»</div><div class="how-body">Для текстов свыше 1 000 символов потребуется оплата 50₽.</div></div>
+    <div class="how-step"><div class="how-n">Шаг 03</div><div class="how-icon">⏱</div><div class="how-title">Подождите ~30 секунд</div><div class="how-body">Система проводит многоуровневый анализ и формирует отчёт.</div></div>
+    <div class="how-step"><div class="how-n">Шаг 04</div><div class="how-icon">📊</div><div class="how-title">Изучите отчёт</div><div class="how-body">Получите баллы, разметку и подробные объяснения по каждому фрагменту.</div></div>
+  </div>
+</section>
+
+<section class="pricing-section" id="pricing">
+  <div class="pr-inner">
+    <div class="sec-lbl">Тарифы</div>
+    <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,42px);font-weight:400;letter-spacing:-.5px">Честные цены, без скрытых платежей</h2>
+    <div class="pr-grid">
+      <div class="pr-card">
+        <div class="pr-name">Бесплатно</div>
+        <div class="pr-price">0<span style="font-family:'Instrument Sans';font-size:20px;font-style:normal;font-weight:700">₽</span></div>
+        <div class="pr-period">До 150 символов</div>
+        <ul class="pr-feats">
+          <li><span class="chk">✓</span>До 150 символов</li>
+          <li><span class="chk">✓</span>Базовый анализ</li>
+          <li><span class="no">✕</span>Разметка текста</li>
+          <li><span class="no">✕</span>PDF-отчёт</li>
+        </ul>
+        <button class="btn-pr" onclick="document.getElementById('userText').focus()">Попробовать</button>
+      </div>
+      <div class="pr-card feat">
+        <div class="pr-tag">Первая проверка</div>
+        <div class="pr-name">Разовая</div>
+        <div class="pr-price">36<span style="font-family:'Instrument Sans';font-size:20px;font-style:normal;font-weight:700">₽</span></div>
+        <div class="pr-period">Первая · далее 150₽</div>
+        <ul class="pr-feats">
+          <li><span class="chk">✓</span>До 100 000 символов</li>
+          <li><span class="chk">✓</span>Полный анализ + объяснения</li>
+          <li><span class="chk">✓</span>Разметка текста</li>
+          <li><span class="chk">✓</span>PDF-отчёт</li>
+        </ul>
+        <button class="btn-pr dark" onclick="showPay('first')">Оплатить 36₽</button>
+      </div>
+      <div class="pr-card feat">
+        <div class="pr-tag">Выгода 21%</div>
+        <div class="pr-name">Бандл 4 проверки</div>
+        <div class="pr-price">475<span style="font-family:'Instrument Sans';font-size:20px;font-style:normal;font-weight:700">₽</span></div>
+        <div class="pr-period">вместо <span class="pr-old">600₽</span></div>
+        <ul class="pr-feats">
+          <li><span class="chk">✓</span>4 полные проверки</li>
+          <li><span class="chk">✓</span>До 100 000 символов</li>
+          <li><span class="chk">✓</span>Разметка + объяснения</li>
+          <li><span class="chk">✓</span>1 рекомендация в подарок</li>
+        </ul>
+        <button class="btn-pr dark" onclick="showPay('bundle')">Купить 475₽</button>
+      </div>
+      <div class="pr-card">
+        <div class="pr-name">Преподаватель</div>
+        <div class="pr-price">2500<span style="font-family:'Instrument Sans';font-size:20px;font-style:normal;font-weight:700">₽</span></div>
+        <div class="pr-period">В месяц · до 50 работ</div>
+        <ul class="pr-feats">
+          <li><span class="chk">✓</span>До 50 работ в месяц</li>
+          <li><span class="chk">✓</span>Массовая проверка</li>
+          <li><span class="chk">✓</span>Сводный PDF-отчёт</li>
+          <li><span class="chk">✓</span>История проверок</li>
+        </ul>
+        <button class="btn-pr dark" onclick="showPay('teacher')">Подключить</button>
+      </div>
+    </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section" id="faq">
+  <div class="sec-lbl">Вопросы и ответы</div>
+  <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,42px);font-weight:400;letter-spacing:-.5px">Часто задаваемые вопросы</h2>
+  <div class="faq-list">
+    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Насколько точно определяется ИИ-текст? <span class="faq-arr">⌄</span></button><div class="faq-a">Для стандартных ИИ-текстов точность 85–95%. Тексты, прошедшие ручную доработку, определяются с меньшей уверенностью. Каждый результат сопровождается объяснением.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Мой текст сохраняется? <span class="faq-arr">⌄</span></button><div class="faq-a">Нет. Текст обрабатывается через защищённый серверный API и нигде не сохраняется. Мы не ведём логов содержимого проверяемых текстов.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Можно проверять дипломные работы? <span class="faq-arr">⌄</span></button><div class="faq-a">Да. Поддерживается до 100 000 символов — достаточно для полной дипломной работы. Результаты носят вспомогательный характер.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Какие нейросети определяет детектор? <span class="faq-arr">⌄</span></button><div class="faq-a">ChatGPT (GPT-4, GPT-4o), Claude, Gemini, Llama, GigaChat, YandexGPT и другие популярные модели.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Нужна ли регистрация? <span class="faq-arr">⌄</span></button><div class="faq-a">Нет. Для бесплатной проверки до 1 000 символов регистрация не нужна. Просто вставьте текст и нажмите «Проверить».</div></div>
+  </div>
+</section>
+
+<div class="overlay" id="overlay" onclick="closePayIfBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closePay()">✕</button>
+    <div class="modal-kicker" id="mKicker">Разовая проверка</div>
+    <div class="modal-title" id="mTitle">Оплата 50 ₽</div>
+    <div class="modal-sub" id="mSub">Одна полная проверка текста до 100 000 символов</div>
+    <div class="modal-price-box">
+      <div class="modal-price-cur">₽</div>
+      <div class="modal-price" id="mPrice">50</div>
+      <div class="modal-price-info" id="mInfo">разовая оплата<br>без подписки</div>
+    </div>
+    <ul class="modal-feats"><li><span class="chk">✓</span>До 100 000 символов</li><li><span class="chk">✓</span>Полная разметка текста</li><li><span class="chk">✓</span>Подробный отчёт</li><li><span class="chk">✓</span>Загрузка файлов</li></ul>
+    <input class="modal-input" type="email" id="payEmail" placeholder="Email для чека (необязательно)">
+    <button class="btn-pay" onclick="doPay()">Оплатить через ЮКассу →</button>
+    <div class="modal-note">🔒 Безопасная оплата · Возврат в течение 24 часов</div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">СтопГПТ.ru</div>
+    <div class="foot-links"><a href="#">Конфиденциальность</a><a href="#">Оферта</a><a href="#">Контакты</a></div>
+    <div class="foot-copy">© 2025 СтопГПТ · Powered by Claude AI</div>
+  </div>
+</footer>
+
+<script>
+const DEMO=`Национальный исследовательский университет «Высшая школа экономики» (НИУ ВШЭ; разг. «Вышка») — российское федеральное государственное автономное высшее учебное заведение. Университет ведёт подготовку и исследования в области социальных и гуманитарных наук, также реализует программы в естественно-научной, медицинской, технической и сельскохозяйственной сферах.
+
+Одно из крупнейших высших учебных заведений в России. ВШЭ создана в 1992 году, нынешний статус носит с 2009 года. Основной кампус находится в Москве, ещё три — в Санкт-Петербурге, Нижнем Новгороде и Перми.`;
+
+let paid=localStorage.getItem('sgpt_paid')==='1';
+let checksCount=parseInt(localStorage.getItem('sgpt_checks')||'0');
+let user=JSON.parse(localStorage.getItem('sgpt_user')||'null');
+let payType='first';
+let lastResult=null;
+let teacherFiles=[];
+
+// COOKIE
+if(!localStorage.getItem('sgpt_cookies')){setTimeout(()=>{const b=document.getElementById('cookieBanner');if(b)b.style.display='flex';},1500);}
+function acceptCookies(){localStorage.setItem('sgpt_cookies','1');const b=document.getElementById('cookieBanner');if(b)b.style.display='none';}
+
+// COUNTER
+function animateCounter(){let n=47293;setInterval(()=>{n+=Math.floor(Math.random()*3);const el=document.getElementById('bigCount');if(el)el.textContent=n.toLocaleString('ru');},9000);}
+animateCounter();
+
+// AUTH
+function showAuth(e){if(e&&e.preventDefault)e.preventDefault();if(user){showLK();return;}const af=document.getElementById('authForm');const cf=document.getElementById('codeForm');if(af)af.style.display='block';if(cf)cf.style.display='none';document.getElementById('authOverlay').classList.add('on');}
+function backToEmail(){document.getElementById('authForm').style.display='block';document.getElementById('codeForm').style.display='none';}
+async function sendCode(){
+  const email=document.getElementById('authEmail').value.trim();
+  if(!email||!email.includes('@')){alert('Введите корректный email');return;}
+  const el=document.getElementById('codeSentTo');if(el)el.textContent='Код отправлен на '+email;
+  document.getElementById('authForm').style.display='none';
+  document.getElementById('codeForm').style.display='block';
+  localStorage.setItem('sgpt_pending_email',email);
+  try{await fetch('/api/send-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});}catch(e){console.log('send-code:',e);}
+}
+async function verifyCode(){
+  const code=document.getElementById('authCode').value.trim();
+  const email=localStorage.getItem('sgpt_pending_email');
+  if(!code||code.length<4){alert('Введите код из письма');return;}
+  try{
+    const resp=await fetch('/api/verify-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,code})});
+    const data=await resp.json();
+    if(data.ok){doLogin(email);}else{alert('Неверный код. Попробуйте ещё раз.');}
+  }catch(e){doLogin(email);}
+}
+function doLogin(email){
+  user={email,name:email.split('@')[0],joined:Date.now(),balance:0};
+  localStorage.setItem('sgpt_user',JSON.stringify(user));
+  closeModal('authOverlay');updateAuthBtn();showLK();
+}
+function updateAuthBtn(){
+  const btn=document.querySelector('.btn-lk');
+  if(btn)btn.textContent=user?'👤 '+user.email.split('@')[0]:'👤 Личный кабинет';
+}
+function showLK(){
+  if(!user){showAuth(null);return;}
+  document.getElementById('lkName').textContent=user.email.split('@')[0];
+  document.getElementById('lkEmail').textContent=user.email;
+  document.getElementById('lkAvatar').textContent=user.email[0].toUpperCase();
+  document.getElementById('lkChecks').textContent=checksCount;
+  document.getElementById('lkBalance').textContent=user.balance||0;
+  const days=Math.max(1,Math.floor((Date.now()-(user.joined||Date.now()))/86400000));
+  document.getElementById('lkDays').textContent=days;
+  const hist=JSON.parse(localStorage.getItem('sgpt_history')||'[]');
+  const ul=document.getElementById('lkHistory');
+  ul.innerHTML=hist.slice(-5).reverse().map(h=>`<li class="lk-hist-item"><span>${h.date}</span><span style="color:var(--ink3)">${h.chars} симв.</span><span style="color:${h.ai>60?'var(--red)':'var(--green)'}">ИИ ${h.ai}%</span></li>`).join('')||'<li style="font-size:12px;color:var(--ink3);padding:8px 0">История пуста</li>';
+  document.getElementById('lkOverlay').classList.add('on');
+}
+function logout(){user=null;localStorage.removeItem('sgpt_user');closeModal('lkOverlay');updateAuthBtn();}
+
+// INPUT MODE
+function setMode(m){
+  document.getElementById('imt-text').classList.toggle('on',m==='text');
+  document.getElementById('imt-file').classList.toggle('on',m==='file');
+  document.getElementById('userText').style.display=m==='text'?'':'none';
+  document.getElementById('filezone').style.display=m==='file'?'block':'none';
+}
+function setCheckerMode(m){
+  const ms=document.getElementById('mode-single');
+  const mt=document.getElementById('mode-teacher');
+  const sm=document.getElementById('singleMode');
+  const tm=document.getElementById('teacherMode');
+  if(ms)ms.classList.toggle('on',m==='single');
+  if(mt)mt.classList.toggle('on',m==='teacher');
+  if(sm)sm.style.display=m==='single'?'':'none';
+  if(tm)tm.style.display=m==='teacher'?'block':'none';
+}
+function onDragOver(e){e.preventDefault();document.getElementById('filezone').classList.add('drag')}
+function onDragLeave(){document.getElementById('filezone').classList.remove('drag')}
+function onDrop(e){e.preventDefault();document.getElementById('filezone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)doFile(f)}
+function onFileChange(e){const f=e.target.files[0];if(f)doFile(f)}
+function doFile(f){
+  document.getElementById('fzchosen').textContent='✓ '+f.name;
+  const r=new FileReader();
+  r.onload=e=>{let t=e.target.result;if(f.name.match(/\.html?$/i)){const d=document.createElement('div');d.innerHTML=t;t=d.innerText;}document.getElementById('userText').value=t.slice(0,100000);setMode('text');updateCount();};
+  r.readAsText(f,'UTF-8');
+}
+function updateCount(){const l=document.getElementById('userText').value.length;document.getElementById('charCount').textContent=l.toLocaleString('ru');document.getElementById('cbarF').style.width=Math.min(100,l/1000)+'%';}
+function loadDemo(){document.getElementById('userText').value=DEMO;setMode('text');updateCount();}
+function clearAll(){document.getElementById('userText').value='';updateCount();showState('rpEmpty');}
+
+// TEACHER
+function onTeacherDrop(e){e.preventDefault();addTeacherFiles(e.dataTransfer.files)}
+function onTeacherFiles(e){addTeacherFiles(e.target.files)}
+function addTeacherFiles(files){for(const f of files){if(f.name.endsWith('.txt'))teacherFiles.push(f);}renderTeacherList();}
+function renderTeacherList(){
+  const ul=document.getElementById('teacherFileList');
+  ul.innerHTML=teacherFiles.map((f,i)=>`<li class="teacher-file"><span class="teacher-file-name">📄 ${f.name}</span><span id="ts${i}" style="font-size:11px;color:var(--ink3)">Ожидание</span></li>`).join('');
+  document.getElementById('teacherBtn').disabled=teacherFiles.length===0;
+}
+async function runTeacherCheck(){
+  if(!paid){showPay('teacher');return;}
+  document.getElementById('teacherBtn').disabled=true;document.getElementById('tSpin').style.display='block';
+  const results=[];
+  for(let i=0;i<teacherFiles.length;i++){
+    const el=document.getElementById('ts'+i);if(el)el.textContent='Проверяется...';
+    const text=await teacherFiles[i].text();
+    try{const resp=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text.slice(0,3000)})});const p=await resp.json();results.push({name:teacherFiles[i].name,orig:p.originality||0,ai:p.ai_probability||0,verdict:p.verdict||''});if(el)el.textContent='✓ Готово';}
+    catch{if(el)el.textContent='Ошибка';}
+  }
+  const div=document.getElementById('teacherResults');div.style.display='block';
+  div.innerHTML='<div style="font-size:15px;font-weight:700;margin-bottom:14px">📊 Сводный отчёт — '+results.length+' работ</div>'+results.map(r=>`<div class="tr-item"><div class="tr-name">📄 ${r.name}</div><div class="tr-scores"><div class="tr-score">Оригинальность: <span style="color:${r.orig>=70?'var(--green)':'var(--red)'}">${r.orig}%</span></div><div class="tr-score">ИИ: <span style="color:${r.ai>=60?'var(--red)':'var(--green)'}">${r.ai}%</span></div><div class="tr-score">${r.verdict}</div></div></div>`).join('');
+  document.getElementById('teacherBtn').disabled=false;document.getElementById('tSpin').style.display='none';
+}
+
+// PROGRESS
+let progT=null;
+function startProg(){['ps1','ps2','ps3','ps4'].forEach(id=>document.getElementById(id).className='pstep');document.getElementById('ps1').classList.add('on');let i=0;const ids=['ps1','ps2','ps3','ps4'];progT=setInterval(()=>{if(i<ids.length-1){document.getElementById(ids[i]).className='pstep done';i++;document.getElementById(ids[i]).classList.add('on');}},1800);}
+function stopProg(){clearInterval(progT);['ps1','ps2','ps3','ps4'].forEach(id=>document.getElementById(id).className='pstep done');}
+function showState(name){['rpEmpty','rpProgress','rpError','rpResults'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.style.display=(id===name)?'block':'none';el.classList.toggle('on',id===name);});}
+function setScore(numId,fillId,pct,isAI){
+  const el=document.getElementById(numId),fi=document.getElementById(fillId);
+  el.textContent=pct+'%';
+  let col,bc;
+  if(isAI){col=pct<=30?'g':pct<=60?'a':'r';bc=pct<=30?'bf-g':pct<=60?'bf-a':'bf-r';}
+  else{col=pct>=70?'g':pct>=40?'a':'r';bc=pct>=70?'bf-g':pct>=40?'bf-a':'bf-r';}
+  el.className='sc-num '+col;fi.className='scbar-f '+bc;setTimeout(()=>fi.style.width=pct+'%',80);
+}
+
+// PAYMENT
+function showPay(type){
+  payType=type;
+  const cfg={
+    first:{kicker:'Первая проверка',title:'Оплата 36₽',sub:'Полная проверка до 100 000 символов',price:'36',info:'первая проверка<br>далее 150₽'},
+    regular:{kicker:'Разовая проверка',title:'Оплата 150₽',sub:'Полная проверка до 100 000 символов',price:'150',info:'разовая оплата'},
+    bundle:{kicker:'Выгодный бандл',title:'4 проверки — 475₽',sub:'Экономия 125₽',price:'475',info:'вместо 600₽'},
+    teacher:{kicker:'Для преподавателей',title:'Подписка 2 500₽/мес',sub:'До 50 работ в месяц',price:'2500',info:'в месяц'},
+    recs:{kicker:'Рекомендации',title:'Оплата 50₽',sub:'Конкретные советы по улучшению текста',price:'50',info:'разовая услуга'}
+  };
+  const c=cfg[type]||cfg.first;
+  document.getElementById('mKicker').textContent=c.kicker;
+  document.getElementById('mTitle').textContent=c.title;
+  document.getElementById('mSub').textContent=c.sub;
+  document.getElementById('mPrice').textContent=c.price;
+  document.getElementById('mInfo').innerHTML=c.info;
+  document.getElementById('payOverlay').classList.add('on');
+}
+function doPay(){
+  paid=true;localStorage.setItem('sgpt_paid','1');
+  closeModal('payOverlay');
+  if(payType==='recs'){generateRecs();return;}
+  runCheck();
+}
+
+// RECS
+async function getRecs(){if(!paid){showPay('recs');return;}generateRecs();}
+async function generateRecs(){
+  if(!lastResult)return;
+  const btn=document.getElementById('recsBtn');if(btn){btn.textContent='Загружаем...';btn.disabled=true;}
+  const text=document.getElementById('userText').value.trim();
+  try{
+    const resp=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text.slice(0,2000),mode:'recommendations'})});
+    const p=await resp.json();
+    const recs=p.recommendations||['Замените общие фразы конкретными примерами из личного опыта','Добавьте живые детали в первый абзац','Разбейте длинные предложения на более короткие'];
+    const rc=document.getElementById('recsContent');if(rc){rc.style.display='block';rc.innerHTML=recs.map(r=>`<div class="rec-item">✏️ ${esc(r)}</div>`).join('');}
+    if(btn)btn.style.display='none';
+  }catch{if(btn){btn.textContent='Получить за 50₽';btn.disabled=false;}}
+}
+
+// PDF
+function downloadPDF(){
+  try{
+    const{jsPDF}=window.jspdf;const doc=new jsPDF();
+    doc.setFontSize(16);doc.text('StopGPT.ru — Otchet o proverke',20,20);
+    doc.setFontSize(11);
+    doc.text('Originalnost: '+(document.getElementById('origNum').textContent||'—'),20,38);
+    doc.text('Veroyatnost II: '+(document.getElementById('aiNum').textContent||'—'),20,48);
+    doc.text('Chitaemost: '+(document.getElementById('readNum').textContent||'—'),20,58);
+    const txt=document.getElementById('markedText').innerText||'';
+    doc.setFontSize(10);doc.text(doc.splitTextToSize(txt,170),20,72);
+    doc.save('stopgpt-report.pdf');
+  }catch(e){alert('PDF error: '+e.message);}
+}
+
+// MAIN CHECK
+async function runCheck(){
+  const text=document.getElementById('userText').value.trim();
+  if(text.length<30){showState('rpError');document.getElementById('errMsg').textContent='Текст слишком короткий. Введите не менее 30 символов.';return;}
+  if(text.length>150&&!paid){showPay(checksCount===0?'first':'regular');return;}
+  showState('rpProgress');
+  document.getElementById('checkBtn').disabled=true;document.getElementById('bspin').style.display='block';
+  startProg();
+  try{
+    const resp=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error||'Ошибка сервера: '+resp.status);}
+    const p=await resp.json();stopProg();lastResult=p;
+    checksCount++;localStorage.setItem('sgpt_checks',checksCount);
+    const hist=JSON.parse(localStorage.getItem('sgpt_history')||'[]');
+    hist.push({date:new Date().toLocaleDateString('ru'),chars:text.length,ai:p.ai_probability||0});
+    localStorage.setItem('sgpt_history',JSON.stringify(hist.slice(-20)));
+    renderResults(p,text);
+  }catch(e){stopProg();showState('rpError');document.getElementById('errMsg').textContent=e.message;}
+  document.getElementById('checkBtn').disabled=false;document.getElementById('bspin').style.display='none';
+}
+
+function renderResults(p,orig){
+  setScore('origNum','origFill',p.originality||0,false);
+  setScore('aiNum','aiFill',p.ai_probability||0,true);
+  const rn=document.getElementById('readNum');rn.textContent=(p.readability||0)+'%';rn.className='sc-num b';
+  const rf=document.getElementById('readFill');rf.className='scbar-f bf-b';setTimeout(()=>rf.style.width=(p.readability||0)+'%',80);
+  if(p.orig_desc)document.getElementById('origDesc').textContent=p.orig_desc;
+  if(p.ai_desc)document.getElementById('aiDesc').textContent=p.ai_desc;
+  if(p.read_desc)document.getElementById('readDesc').textContent=p.read_desc;
+  const vt=document.getElementById('verdictTag');vt.textContent=p.verdict||'';
+  const ai=p.ai_probability||0;
+  if(ai>=70)vt.style.cssText='background:var(--red-bg);color:var(--red);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700';
+  else if(ai>=40)vt.style.cssText='background:var(--amber-bg);color:var(--amber);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700';
+  else vt.style.cssText='background:var(--green-bg);color:var(--green);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700';
+  const box=document.getElementById('markedText');
+  if(p.segments&&p.segments.length){
+    let html='',rem=orig;
+    p.segments.forEach(s=>{const t=(s.text||'').trim();if(!t)return;const idx=rem.indexOf(t);if(idx>0){html+=esc(rem.slice(0,idx)).replace(/\n/g,'<br>');rem=rem.slice(idx);}const cls=s.type==='ai'?'hl-ai':s.type==='plagiat'?'hl-plag':s.type==='original'?'hl-ok':'';const ti=s.reason?` title="${esc(s.reason)}"` :'';const chunk=idx>=0?rem.slice(0,t.length):t;html+=cls?`<span class="${cls}"${ti}>${esc(chunk)}</span>`:esc(chunk);if(idx>=0)rem=rem.slice(t.length);});
+    if(rem)html+=esc(rem).replace(/\n/g,'<br>');box.innerHTML=html;
+  }else{box.innerHTML=esc(orig).replace(/\n/g,'<br>');}
+  const det=document.getElementById('rpDetails');det.innerHTML='';
+  const IM={ai:'di-ai',plagiat:'di-plag',ok:'di-ok',info:'di-info'};
+  const IE={ai:'⚠',plagiat:'📋',ok:'✓',info:'ℹ'};
+  const BM={ai:'<span class="badge bai">ИИ</span>',plagiat:'<span class="badge bplag">Плагиат</span>',ok:'<span class="badge bok">Оригинал</span>'};
+  (p.details||[]).forEach(d=>{const ic=IM[d.type]||'di-info',em=IE[d.type]||'ℹ',b=BM[d.type]||'';det.innerHTML+=`<div class="detail-item"><div class="di-ico ${ic}">${em}</div><div><div class="di-title">${b} ${esc(d.title||'')}</div><div class="di-body">${esc(d.body||'')}</div></div></div>`;});
+  const rc=document.getElementById('recsContent');if(rc)rc.style.display='none';
+  const rb=document.getElementById('recsBtn');if(rb){rb.style.display='inline-block';rb.textContent='Получить за 50₽';rb.disabled=false;}
+  showState('rpResults');
+  setTimeout(()=>document.getElementById('rpResults').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function faq(btn){btn.parentElement.classList.toggle('open');}
+function closeModal(id){const el=document.getElementById(id);if(el)el.classList.remove('on');}
+function closeIfBg(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+
+// INIT
+setMode('text');
+setCheckerMode('single');
+updateAuthBtn();
+
+</script>
+
+<!-- PAY MODAL -->
+<div class="overlay" id="payOverlay" onclick="closeIfBg(event,'payOverlay')">
+  <div class="modal">
+    <div class="modal-grad-bar"></div>
+    <button class="modal-close" onclick="closeModal('payOverlay')">✕</button>
+    <div class="modal-kicker" id="mKicker">Разовая проверка</div>
+    <div class="modal-title" id="mTitle">Оплата 36₽</div>
+    <div class="modal-sub" id="mSub">Первая полная проверка до 100 000 символов</div>
+    <div class="modal-price-box">
+      <div class="modal-price-cur">₽</div>
+      <div class="modal-price" id="mPrice">36</div>
+      <div class="modal-price-info" id="mInfo">первая проверка<br>далее 150₽</div>
+    </div>
+    <ul class="modal-feats"><li><span class="chk">✓</span>До 100 000 символов</li><li><span class="chk">✓</span>Полная разметка с объяснениями</li><li><span class="chk">✓</span>PDF-отчёт</li></ul>
+    <input class="modal-input" type="email" id="payEmail" placeholder="Email для чека (необязательно)">
+    <button class="btn-pay" onclick="doPay()">Оплатить через ЮКассу →</button>
+    <div class="modal-note">🔒 Безопасная оплата · Возврат в течение 24 часов</div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="authOverlay" onclick="closeIfBg(event,'authOverlay')">
+  <div class="modal">
+    <div class="modal-grad-bar"></div>
+    <button class="modal-close" onclick="closeModal('authOverlay')">✕</button>
+    <div class="modal-title">Войти в СтопГПТ</div>
+    <div class="modal-sub" style="margin-bottom:0">Без пароля — только email и код из письма</div>
+    <div class="auth-tabs"><button class="auth-tab on">Войти / Регистрация</button></div>
+    <div id="authForm">
+      <div class="auth-form">
+        <input class="modal-input" type="email" id="authEmail" placeholder="Ваш email" style="margin-bottom:0">
+        <button class="btn-pay" onclick="sendCode()">Получить код на email →</button>
+        <div style="font-size:11px;color:var(--ink3);text-align:center">Без пароля · Код придёт на почту</div>
+      </div>
+    </div>
+    <div id="codeForm" style="display:none">
+      <div class="auth-code-sent">
+        <div class="auth-code-emoji">📬</div>
+        <div class="auth-code-title">Код отправлен!</div>
+        <div class="auth-code-sub" id="codeSentTo">Проверьте вашу почту</div>
+      </div>
+      <div class="auth-form">
+        <input class="modal-input" type="text" id="authCode" placeholder="Код из письма" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:6px;margin-bottom:0">
+        <button class="btn-pay" onclick="verifyCode()">Войти →</button>
+        <div style="font-size:11px;color:var(--ink3);text-align:center;cursor:pointer" onclick="backToEmail()">← Изменить email</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LK MODAL -->
+<div class="overlay" id="lkOverlay" onclick="closeIfBg(event,'lkOverlay')">
+  <div class="modal lk-modal">
+    <div class="modal-grad-bar"></div>
+    <button class="modal-close" onclick="closeModal('lkOverlay')">✕</button>
+    <div class="lk-header">
+      <div class="lk-avatar" id="lkAvatar">В</div>
+      <div><div class="lk-name" id="lkName">Личный кабинет</div><div class="lk-email" id="lkEmail"></div></div>
+    </div>
+    <div class="lk-stats">
+      <div class="lk-stat"><div class="lk-stat-num" id="lkChecks">0</div><div class="lk-stat-lbl">Проверок</div></div>
+      <div class="lk-stat"><div class="lk-stat-num" id="lkBalance">0</div><div class="lk-stat-lbl">Баланс ₽</div></div>
+      <div class="lk-stat"><div class="lk-stat-num" id="lkDays">1</div><div class="lk-stat-lbl">Дней с нами</div></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">История проверок</div>
+    <ul class="lk-history" id="lkHistory"></ul>
+    <button class="btn-pr dark" style="margin-top:14px;border-radius:100px" onclick="closeModal('lkOverlay');showPay('first')">+ Пополнить баланс</button>
+    <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
+  </div>
+</div>
+
+<!-- COOKIE -->
+<div class="cookie-banner" id="cookieBanner" style="display:none">
+  <div class="cookie-text">🍪 Мы используем файлы cookie для улучшения работы сайта.</div>
+  <div class="cookie-actions">
+    <button class="btn-cookie-more" onclick="document.getElementById('cookieBanner').style.display='none'">Подробнее</button>
+    <button class="btn-cookie-ok" onclick="acceptCookies()">Принять</button>
+  </div>
+</div>
+
+</body>
+</html>
