@@ -1,53 +1,58 @@
-import Anthropic from '@anthropic-ai/sdk';
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-const STYLE_PROMPTS = {
-  casual: 'Перепиши текст в неформальном, живом, разговорном стиле. Используй простые слова, короткие предложения, личный тон. Звучи как реальный человек, а не как ИИ.',
-  academic: 'Перепиши текст в академическом стиле — структурированно, грамотно, но без излишней сухости. Разнообразь синтаксис, избегай повторяющихся конструкций.',
-  formal: 'Перепиши текст в деловом стиле — официально, чётко, профессионально. Избегай канцеляризмов и штампов ИИ.',
-};
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') { res.status(200).end(); return; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
   const { text, style = 'casual', paid } = req.body || {};
-  if (!text || typeof text !== 'string') return res.status(400).json({ error: 'Текст обязателен' });
+  if (!text || typeof text !== 'string' || text.trim().length < 5) {
+    res.status(400).json({ error: 'Текст слишком короткий' }); return;
+  }
 
   const isPaid = paid === true || paid === 'true';
   const MAX_CHARS = isPaid ? 8000 : 1500;
 
   if (text.length > MAX_CHARS) {
-    return res.status(400).json({
-      error: `Превышен лимит символов: ${text.length} из ${MAX_CHARS}`,
-      limit: MAX_CHARS,
-    });
+    res.status(400).json({ error: `Превышен лимит: ${text.length} из ${MAX_CHARS} симв.`, limit: MAX_CHARS });
+    return;
   }
 
-  const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.casual;
+  const STYLE_HINTS = {
+    casual:   'Пиши живо, разговорно, без пафоса — как сообщение другу.',
+    academic: 'Пиши в академическом стиле: структурировано, грамотно, без штампов.',
+    formal:   'Пиши в деловом стиле: официально, чётко, профессионально.',
+  };
+  const styleHint = STYLE_HINTS[style] || STYLE_HINTS.casual;
 
-  const systemPrompt = `Ты — профессиональный редактор-гуманайзер. Твоя задача: переписать текст так, чтобы он звучал как написанный живым человеком, а не ИИ.
-
-Правила:
-- Сохраняй смысл и факты оригинала полностью
-- Разнообразь длину предложений (коротких и длинных — поровну)
-- Убери шаблонные вводные фразы: «в современном мире», «следует отметить», «таким образом», «необходимо подчеркнуть»
-- Добавь живые детали, конкретику, личные наблюдения там, где уместно
-- Не пиши объяснений — только переписанный текст
-- ${stylePrompt}`;
+  const systemPrompt = `Ты — профессиональный редактор. Перепиши текст так, чтобы он звучал как написанный живым человеком, не ИИ. Правила: сохраняй смысл полностью; разнообразь длину предложений; убери фразы-штампы («в современном мире», «следует отметить», «таким образом», «необходимо подчеркнуть»); не добавляй объяснений — только переписанный текст. ${styleHint}`;
 
   try {
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: `Перепиши этот текст:\n\n${text}` }],
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `Перепиши этот текст:\n\n${text}` }],
+      }),
     });
 
-    const result = response.content[0]?.text || '';
-    return res.status(200).json({ result, chars_in: text.length, chars_out: result.length });
+    const data = await resp.json();
+    if (!resp.ok) {
+      console.error('Anthropic error:', data);
+      res.status(500).json({ error: 'Ошибка API. Попробуйте ещё раз.' }); return;
+    }
+
+    const result = data.content?.[0]?.text || '';
+    res.status(200).json({ result, chars_in: text.length, chars_out: result.length });
   } catch (err) {
     console.error('humanize error:', err);
-    return res.status(500).json({ error: 'Ошибка обработки. Попробуйте ещё раз.' });
+    res.status(500).json({ error: 'Ошибка сервера. Попробуйте ещё раз.' });
   }
 }
