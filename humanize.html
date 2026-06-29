@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гуманайзер текста — убрать ИИ стиль | СтопГПТ</title>
+<meta name="description" content="Переписываем ИИ-текст так, чтобы он звучал как живой человек. Убираем шаблоны ChatGPT и обходим детекторы ИИ. Три стиля: разговорный, академический, деловой.">
+<meta name="keywords" content="гуманайзер текста, убрать ии из текста, сделать текст человечным, обойти детектор ии, антиплагиат нейросеть">
+<link rel="canonical" href="https://www.stopgpt.ru/humanize">
+<meta property="og:title" content="Гуманайзер текста — СтопГПТ">
+<meta property="og:description" content="Переписываем ИИ-текст как живой человек. Три стиля, мгновенный результат.">
+<meta property="og:url" content="https://www.stopgpt.ru/humanize">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🛑</text></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0d;--ink2:#444;--ink3:#888;--ink4:#bbb;
+  --bg:#f5f5fb;--white:#fff;--border:#e8e8e8;--border2:#d4d4d4;
+  --accent:#2563eb;--accent2:#1d4ed8;--accent-bg:#eff6ff;
+  --green:#16a34a;--green-bg:#f0fdf4;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;
+  --r:14px;--rs:8px;
+}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+header{background:rgba(255,255,255,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,.07);position:sticky;top:0;z-index:100}
+.hdr{max-width:1160px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:baseline;gap:2px;text-decoration:none}
+.logo-stop{font-family:'Instrument Serif',serif;font-size:21px;font-style:italic;color:var(--ink)}
+.logo-gpt{font-size:21px;font-weight:700;color:var(--accent);letter-spacing:-.5px}
+.logo-dot{font-size:21px;color:var(--ink3)}
+.hdr-sep{width:1px;height:20px;background:var(--border2)}
+nav{display:flex;gap:2px;flex:1}
+nav a{font-size:14px;font-weight:500;color:var(--ink2);text-decoration:none;padding:6px 12px;border-radius:8px;transition:all .12s}
+nav a:hover{background:#f0f0f0;color:var(--ink)}
+nav a.active{background:var(--accent-bg);color:var(--accent);font-weight:600}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-lk{padding:7px 18px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn-lk:hover{background:#222}
+
+/* ─── Hero ───────────────────────────────────────────────────── */
+.hero{text-align:center;padding:52px 24px 36px;max-width:700px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-bg);color:var(--purple);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:20px}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(32px,5vw,52px);font-weight:400;line-height:1.08;margin-bottom:14px}
+.hero h1 em{font-style:italic;color:var(--purple)}
+.hero-sub{font-size:17px;color:var(--ink2);line-height:1.6;margin-bottom:28px}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.pill{padding:6px 14px;background:var(--white);border:1px solid var(--border);border-radius:100px;font-size:13px;font-weight:500;color:var(--ink2)}
+
+/* ─── Tool area ───────────────────────────────────────────────── */
+.tool-wrap{max-width:1160px;margin:0 auto;padding:0 24px 80px}
+
+/* Style picker */
+.style-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.style-btn{display:flex;flex-direction:column;gap:2px;padding:10px 18px;background:var(--white);border:2px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;text-align:left}
+.style-btn:hover{border-color:var(--border2)}
+.style-btn.active{border-color:var(--purple);background:var(--purple-bg)}
+.style-btn .sn{font-size:13px;font-weight:700;color:var(--ink)}
+.style-btn .sd{font-size:11px;color:var(--ink3);font-weight:500}
+.style-btn.active .sn{color:var(--purple)}
+
+/* Split panel */
+.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.panel{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;min-height:380px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3)}
+.panel-counter{font-size:12px;color:var(--ink4);font-weight:500}
+.panel-body{flex:1;position:relative}
+textarea{width:100%;height:100%;min-height:320px;padding:16px;font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.65;color:var(--ink);background:transparent;border:none;outline:none;resize:none}
+textarea::placeholder{color:var(--ink4)}
+.output-area{padding:16px;font-size:15px;line-height:1.65;color:var(--ink);min-height:320px;white-space:pre-wrap;word-break:break-word}
+.output-placeholder{color:var(--ink4);font-style:italic}
+.panel-foot{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+/* CTA row */
+.cta-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn-humanize{padding:13px 32px;background:linear-gradient(135deg,var(--purple),var(--accent));color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:8px}
+.btn-humanize:hover{opacity:.88}
+.btn-humanize:disabled{opacity:.4;cursor:not-allowed}
+.btn-copy{padding:10px 20px;background:var(--white);color:var(--ink2);border:1.5px solid var(--border2);border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-copy:hover{border-color:var(--ink);color:var(--ink)}
+.btn-check{padding:10px 20px;background:var(--accent-bg);color:var(--accent);border:1.5px solid rgba(37,99,235,.2);border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none}
+.btn-check:hover{background:#dbeafe}
+.limit-note{font-size:13px;color:var(--ink3);flex:1;text-align:right}
+
+/* Paywall / lock */
+.lock-banner{background:linear-gradient(135deg,var(--purple-bg),var(--accent-bg));border:1.5px solid rgba(124,58,237,.2);border-radius:var(--r);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.lock-icon{font-size:28px;flex-shrink:0}
+.lock-text .lt{font-size:15px;font-weight:700;color:var(--purple);margin-bottom:3px}
+.lock-text .ld{font-size:13px;color:var(--ink2)}
+.btn-unlock{margin-left:auto;padding:10px 22px;background:var(--purple);color:white;border:none;border-radius:100px;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-unlock:hover{background:#6d28d9}
+
+/* Loading */
+.loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;border-radius:var(--r);flex-direction:column;gap:10px}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;color:var(--ink2);font-weight:600}
+.hidden{display:none!important}
+
+/* Diff highlight */
+.diff-added{background:rgba(22,163,74,.12);border-radius:3px;padding:0 2px}
+
+/* Social proof */
+.proof-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.proof-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;flex:1;min-width:220px}
+.proof-stars{color:#f59e0b;font-size:14px;margin-bottom:6px}
+.proof-text{font-size:13px;color:var(--ink2);line-height:1.5;margin-bottom:8px}
+.proof-author{font-size:12px;color:var(--ink3);font-weight:600}
+
+/* How-to */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.how-step{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.how-num{font-family:'Instrument Serif',serif;font-size:32px;font-style:italic;color:var(--purple);margin-bottom:8px}
+.how-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.how-desc{font-size:13px;color:var(--ink2);line-height:1.5}
+
+/* Responsive */
+@media(max-width:768px){
+  .panel-grid{grid-template-columns:1fr}
+  .how-grid{grid-template-columns:1fr 1fr}
+  .hdr{padding:0 16px}nav{display:none}
+  .tool-wrap{padding:0 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <a href="/" class="logo">
+      <span class="logo-stop">Стоп</span><span class="logo-gpt">ГПТ</span><span class="logo-dot">.ru</span>
+    </a>
+    <div class="hdr-sep"></div>
+    <nav>
+      <a href="/">Проверить</a>
+      <a href="/humanize.html" class="active">Гуманайзер</a>
+      <a href="/#tariffs">Тарифы</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/contacts.html">Контакты</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="btn-lk" id="lkBtn" onclick="handleLKClick()">👤 Личный кабинет</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">🤖 → ✍️ Новая функция</div>
+  <h1>Сделай текст<br><em>человечным</em></h1>
+  <p class="hero-sub">Переписываем ИИ-текст так, чтобы он звучал как написанный живым человеком. Три стиля, без водяных знаков.</p>
+  <div class="hero-pills">
+    <span class="pill">✅ Сохраняет смысл</span>
+    <span class="pill">✅ Три стиля подачи</span>
+    <span class="pill">✅ Русский язык</span>
+    <span class="pill">✅ Мгновенно</span>
+  </div>
+</div>
+
+<div class="tool-wrap">
+
+  <!-- Paywall banner (for free users) -->
+  <div class="lock-banner" id="lockBanner">
+    <div class="lock-icon">✨</div>
+    <div class="lock-text">
+      <div class="lt">Гуманайзер — платная функция</div>
+      <div class="ld">Доступен в тарифах «Студент» и выше. Первые 1500 символов — бесплатно для пробы.</div>
+    </div>
+    <button class="btn-unlock" onclick="window.location.href='/?pay=1'">Разблокировать →</button>
+  </div>
+
+  <!-- Style picker -->
+  <div class="style-bar">
+    <button class="style-btn active" data-style="casual" onclick="setStyle(this)">
+      <span class="sn">💬 Разговорный</span>
+      <span class="sd">Живо, естественно, без пафоса</span>
+    </button>
+    <button class="style-btn" data-style="academic" onclick="setStyle(this)">
+      <span class="sn">🏛️ Академический</span>
+      <span class="sd">Для курсовых, дипломов, статей</span>
+    </button>
+    <button class="style-btn" data-style="formal" onclick="setStyle(this)">
+      <span class="sn">🖋️ Деловой</span>
+      <span class="sd">Официально и профессионально</span>
+    </button>
+  </div>
+
+  <!-- Split panel -->
+  <div class="panel-grid">
+    <!-- Input -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-label">Исходный текст</span>
+        <span class="panel-counter" id="inputCounter">0 / 8000 симв.</span>
+      </div>
+      <div class="panel-body">
+        <textarea id="inputText" placeholder="Вставьте текст сгенерированный ИИ...&#10;&#10;Например: «В современном мире искусственный интеллект играет ключевую роль в развитии технологического прогресса...»" oninput="onInput()"></textarea>
+      </div>
+      <div class="panel-foot">
+        <button onclick="clearInput()" style="background:none;border:none;font-size:13px;color:var(--ink3);cursor:pointer;padding:0">✕ Очистить</button>
+        <button onclick="pasteText()" style="background:none;border:none;font-size:13px;color:var(--ink3);cursor:pointer;padding:0;margin-left:8px">📋 Вставить</button>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-label">Результат</span>
+        <span class="panel-counter" id="outputCounter">0 симв.</span>
+      </div>
+      <div class="panel-body" style="position:relative">
+        <div class="output-area" id="outputArea">
+          <span class="output-placeholder">Здесь появится переписанный текст...</span>
+        </div>
+        <div class="loading-overlay hidden" id="loadingOverlay">
+          <div class="spinner"></div>
+          <div class="loading-txt" id="loadingTxt">Переписываем...</div>
+        </div>
+      </div>
+      <div class="panel-foot">
+        <button class="btn-copy hidden" id="copyBtn" onclick="copyResult()">📋 Копировать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA row -->
+  <div class="cta-row">
+    <button class="btn-humanize" id="humanizeBtn" onclick="doHumanize()">
+      <span>🤖→✍️</span><span>Гуманизировать</span>
+    </button>
+    <a class="btn-check" id="checkAgainBtn" href="/" style="display:none">🔍 Проверить результат</a>
+    <div class="limit-note" id="limitNote">Бесплатно: до 1500 симв. · Платно: до 8000 симв.</div>
+  </div>
+
+  <!-- How-to steps -->
+  <div class="how-grid">
+    <div class="how-step"><div class="how-num">01</div><div class="how-title">Вставьте ИИ-текст</div><div class="how-desc">Скопируйте текст из ChatGPT, Claude или любого другого ИИ-инструмента.</div></div>
+    <div class="how-step"><div class="how-num">02</div><div class="how-title">Выберите стиль</div><div class="how-desc">Разговорный — для блогов и соцсетей. Академический — для учёбы. Деловой — для работы.</div></div>
+    <div class="how-step"><div class="how-num">03</div><div class="how-title">Нажмите «Гуманизировать»</div><div class="how-desc">Нейросеть переписывает текст за несколько секунд, сохраняя смысл.</div></div>
+    <div class="how-step"><div class="how-num">04</div><div class="how-title">Проверьте результат</div><div class="how-desc">Нажмите «Проверить результат» — убедитесь, что ИИ% снизился до приемлемого уровня.</div></div>
+  </div>
+
+</div><!-- /tool-wrap -->
+
+<script>
+const user = JSON.parse(localStorage.getItem('sgpt_user') || 'null');
+const isPaid = user && (user.paid || user.plan);
+let currentStyle = 'casual';
+let resultText = '';
+
+// Init
+document.getElementById('lkBtn').textContent = user ? '👤 ' + user.email.split('@')[0] : '👤 Личный кабинет';
+if (isPaid) document.getElementById('lockBanner').style.display = 'none';
+
+// Pre-fill text from URL param (когда приходим с детектора)
+const params = new URLSearchParams(location.search);
+const prefill = params.get('text');
+if (prefill) {
+  document.getElementById('inputText').value = decodeURIComponent(prefill);
+  onInput();
+}
+
+function handleLKClick() {
+  if (user) { window.location.href = '/lk.html'; return; }
+  window.location.href = '/?auth=1';
+}
+
+function setStyle(btn) {
+  document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentStyle = btn.dataset.style;
+}
+
+function onInput() {
+  const text = document.getElementById('inputText').value;
+  const limit = isPaid ? 8000 : 1500;
+  const counter = document.getElementById('inputCounter');
+  counter.textContent = text.length.toLocaleString('ru') + ' / ' + limit.toLocaleString('ru') + ' симв.';
+  counter.style.color = text.length > limit ? 'var(--red)' : 'var(--ink4)';
+}
+
+function clearInput() {
+  document.getElementById('inputText').value = '';
+  onInput();
+}
+
+async function pasteText() {
+  try {
+    const t = await navigator.clipboard.readText();
+    document.getElementById('inputText').value = t;
+    onInput();
+  } catch {}
+}
+
+async function doHumanize() {
+  const text = document.getElementById('inputText').value.trim();
+  if (!text) return;
+
+  const limit = isPaid ? 8000 : 1500;
+  if (text.length > limit) {
+    alert(`Текст слишком длинный. Максимум ${limit} символов${!isPaid ? ' для бесплатной версии. Перейдите на платный тариф для 8000 симв.' : ''}.`);
+    return;
+  }
+
+  const btn = document.getElementById('humanizeBtn');
+  const overlay = document.getElementById('loadingOverlay');
+  const loadingTxt = document.getElementById('loadingTxt');
+  btn.disabled = true;
+  overlay.classList.remove('hidden');
+
+  const tips = ['Убираем шаблоны ИИ...', 'Разнообразим синтаксис...', 'Добавляем живость...', 'Финальная полировка...'];
+  let i = 0;
+  const tipInterval = setInterval(() => { loadingTxt.textContent = tips[i++ % tips.length]; }, 1800);
+
+  try {
+    const resp = await fetch('/api/humanize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, style: currentStyle, paid: isPaid }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Ошибка');
+
+    resultText = data.result || '';
+    const outputArea = document.getElementById('outputArea');
+    outputArea.innerHTML = resultText.replace(/\n/g, '<br>');
+    document.getElementById('outputCounter').textContent = resultText.length.toLocaleString('ru') + ' симв.';
+    document.getElementById('copyBtn').classList.remove('hidden');
+    document.getElementById('checkAgainBtn').style.display = '';
+    document.getElementById('checkAgainBtn').href = '/?text=' + encodeURIComponent(resultText.slice(0, 3000));
+  } catch (err) {
+    alert('Ошибка: ' + err.message);
+  } finally {
+    clearInterval(tipInterval);
+    overlay.classList.add('hidden');
+    btn.disabled = false;
+  }
+}
+
+function copyResult() {
+  if (!resultText) return;
+  navigator.clipboard.writeText(resultText).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Скопировано';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// Ctrl+Enter
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') doHumanize();
+});
+</script>
+</body>
+</html>
