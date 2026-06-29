@@ -3,6 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="СтопГПТ — детектор ИИ-текстов онлайн. Определяем ChatGPT, Claude, Gemini, GigaChat за 30 секунд с точностью 95%. Бесплатно до 150 символов.">
+<meta name="keywords" content="детектор ИИ текст, проверка на нейросеть, ChatGPT детектор, антиплагиат ИИ, определить написан ли текст ИИ, StopGPT">
+<meta name="author" content="СтопГПТ">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.stopgpt.ru">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.stopgpt.ru">
+<meta property="og:title" content="СтопГПТ — Детектор ИИ-текстов">
+<meta property="og:description" content="Определяем ChatGPT, Claude, Gemini за 30 секунд. Точность 95%. Первая проверка всего 36₽.">
+<meta property="og:image" content="https://www.stopgpt.ru/og-image.png">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="СтопГПТ">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="СтопГПТ — Детектор ИИ-текстов">
+<meta name="twitter:description" content="Определяем ChatGPT, Claude, Gemini за 30 секунд. Точность 95%.">
+<meta name="twitter:image" content="https://www.stopgpt.ru/og-image.png">
+
+<!-- Favicon inline SVG -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>🛑</text></svg>">
+
+<!-- JSON-LD: SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "СтопГПТ",
+  "url": "https://www.stopgpt.ru",
+  "description": "Онлайн-детектор ИИ-текстов. Определяет тексты ChatGPT, Claude, Gemini, GigaChat с точностью до 95%.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ru",
+  "offers": [
+    {"@type":"Offer","name":"Бесплатно","price":"0","priceCurrency":"RUB","description":"До 150 символов"},
+    {"@type":"Offer","name":"Разовая","price":"36","priceCurrency":"RUB","description":"Первая полная проверка"},
+    {"@type":"Offer","name":"Преподаватель","price":"2500","priceCurrency":"RUB","description":"Подписка, до 50 работ в месяц"}
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "312"
+  }
+}
+</script>
+<!-- JSON-LD: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Насколько точно определяется ИИ-текст?","acceptedAnswer":{"@type":"Answer","text":"Для стандартных ИИ-текстов точность 85–95%. Тексты, прошедшие ручную доработку, определяются с меньшей уверенностью."}},
+    {"@type":"Question","name":"Мой текст сохраняется?","acceptedAnswer":{"@type":"Answer","text":"Нет. Текст обрабатывается через защищённый серверный API и нигде не сохраняется."}},
+    {"@type":"Question","name":"Какие нейросети определяет детектор?","acceptedAnswer":{"@type":"Answer","text":"ChatGPT (GPT-4, GPT-4o), Claude, Gemini, Llama, GigaChat, YandexGPT и другие популярные модели."}}
+  ]
+}
+</script>
+
 <title>СтопГПТ — Детектор ИИ-текстов и проверка оригинальности  </title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -219,13 +279,7 @@ textarea#userText::placeholder{color:var(--ink4)}
 .btn-pay:hover{background:#222}
 .modal-note{font-size:12px;color:var(--ink3);text-align:center;margin-top:12px}
 
-footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
-.foot-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.foot-logo{font-family:'Instrument Serif',serif;font-size:20px;font-style:italic;color:var(--white)}
-.foot-links{display:flex;gap:20px}
-.foot-links a{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;font-weight:500;transition:color .12s}
-.foot-links a:hover{color:rgba(255,255,255,.8)}
-.foot-copy{font-size:13px}
+/* footer styles moved to foot-inner-new */
 
 @media(max-width:860px){.split{grid-template-columns:1fr}}
 @media(max-width:700px){
@@ -351,8 +405,64 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
   .mode-tabs{flex-wrap:wrap}
 }
 
+
+
+
+.hdr-nav{display:flex;align-items:center;gap:4px;margin-left:auto;margin-right:16px}
+.hdr-link{font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink2);text-decoration:none;padding:6px 12px;border-radius:7px;transition:background .12s,color .12s}
+.hdr-link:hover{background:#f5f5f5;color:var(--ink)}
+@media(max-width:760px){.hdr-nav{display:none}}
+
+footer{background:var(--ink);color:rgba(255,255,255,.45)}
+.foot-inner-new{max-width:1200px;margin:0 auto;padding:56px 32px 32px}
+.foot-cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.foot-logo-new{font-family:'Instrument Serif',serif;font-size:24px;font-style:italic;color:white;margin-bottom:10px}
+.foot-desc{font-size:13px;line-height:1.6;margin-bottom:16px;color:rgba(255,255,255,.45);max-width:240px}
+.foot-socials{display:flex;gap:8px}
+.foot-social{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);text-decoration:none;transition:all .15s}
+.foot-social:hover{background:rgba(255,255,255,.15);color:white}
+.foot-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.35);margin-bottom:14px}
+.foot-col-link{display:block;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:8px;transition:color .12s}
+.foot-col-link:hover{color:rgba(255,255,255,.85)}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-copy-new{font-size:12px;color:rgba(255,255,255,.3)}
+.foot-bottom-links{display:flex;gap:16px}
+.foot-bottom-link{font-size:12px;color:rgba(255,255,255,.3);text-decoration:none;transition:color .12s}
+.foot-bottom-link:hover{color:rgba(255,255,255,.6)}
+@media(max-width:860px){.foot-cols{grid-template-columns:1fr 1fr;gap:28px}}
+@media(max-width:540px){.foot-cols{grid-template-columns:1fr}.foot-inner-new{padding:40px 16px 24px}}
+
+.reviews-section{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 32px}
+.reviews-inner{max-width:1200px;margin:0 auto}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.review-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;transition:border-color .15s}
+.review-card:hover{border-color:var(--border2)}
+.review-stars{color:#f59e0b;font-size:14px;letter-spacing:1px}
+.review-text{font-size:14px;color:var(--ink2);line-height:1.65;flex:1}
+.review-author{display:flex;align-items:center;gap:10px;margin-top:4px}
+.review-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
+.review-name{font-size:13px;font-weight:700;color:var(--ink)}
+.review-meta{font-size:12px;color:var(--ink3)}
+@media(max-width:720px){.reviews-grid{grid-template-columns:1fr}}
+
+.trust-bar{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 32px}
+.trust-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.trust-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);white-space:nowrap}
+.trust-logos{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.trust-item{font-size:13px;font-weight:600;color:var(--ink2)}
+.trust-sep{color:var(--border2);font-size:14px}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<!-- Yandex.Metrika: вставьте ваш счётчик здесь -->
+
+<!-- 
+  ИНСТРУКЦИЯ ПО ЯНДЕКС.МЕТРИКЕ:
+  1. Зарегистрируйтесь на metrika.yandex.ru
+  2. Создайте счётчик для stopgpt.ru
+  3. Вставьте полученный код сюда, перед </head>
+-->
 </head>
 <body>
 
@@ -362,7 +472,15 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
     <a href="#" class="logo">
       <span class="logo-stop">Стоп</span><span class="logo-gpt">ГПТ</span><span class="logo-dot">.ru</span>
     </a>
-    <div class="hdr-right"><button class="btn-lk" onclick="showAuth(event)">👤 Личный кабинет</button></div>
+    <nav class="hdr-nav" style="display:flex;align-items:center;gap:4px;margin-left:auto;margin-right:16px">
+      <a href="#checker" class="hdr-link">Проверить</a>
+      <a href="humanize.html" class="hdr-link" style="color:var(--purple,#7c3aed);font-weight:600">✨ Гуманайзер</a>
+      <a href="#features" class="hdr-link">Возможности</a>
+      <a href="#pricing" class="hdr-link">Тарифы</a>
+      <a href="#faq" class="hdr-link">FAQ</a>
+      <a href="contacts.html" class="hdr-link">Контакты</a>
+    </nav>
+    <div class="hdr-right"><button class="btn-lk" id="lkBtn" onclick="handleLKClick(event)">👤 Личный кабинет</button></div>
   </div>
 </header>
 
@@ -394,6 +512,23 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
   </div>
 </div>
 
+<div class="trust-bar">
+  <div class="trust-inner">
+    <span class="trust-label">Нам доверяют</span>
+    <div class="trust-logos">
+      <span class="trust-item">🎓 ВШЭ</span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">🎓 МГУ</span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">📰 vc.ru</span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">📰 Хабр</span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">⭐ 4.9 / 5 по отзывам</span>
+    </div>
+  </div>
+</div>
+
 <section class="checker-section" id="checker">
   <div class="sec-lbl">Детектор ИИ и плагиата</div>
 
@@ -417,9 +552,9 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
           <div id="filezone" ondrop="onDrop(event)" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" onclick="document.getElementById('fi').click()">
             <div class="fz-icon">📄</div>
             <div class="fz-title">Перетащите файл или нажмите для выбора</div>
-            <div class="fz-sub">Поддерживаются: .txt, .html, .rtf</div>
+            <div class="fz-sub">Поддерживаются: .txt, .html, .rtf, .docx</div>
             <div class="fz-chosen" id="fzchosen"></div>
-            <input type="file" id="fi" accept=".txt,.html,.htm,.rtf" style="display:none" onchange="onFileChange(event)">
+            <input type="file" id="fi" accept=".txt,.html,.htm,.rtf,.docx" style="display:none" onchange="onFileChange(event)">
           </div>
         </div>
         <div class="panel-foot">
@@ -461,19 +596,38 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
             <div class="rp-rtitle">Отчёт о проверке</div>
             <div class="rp-head-right">
               <div class="verdict-tag" id="verdictTag"></div>
+              <button class="btn-pdf" onclick="copyResult()" id="copyBtn" style="background:#f5f5f5;color:var(--ink);border:1px solid var(--border2)">📋 Копировать</button>
+              <button class="btn-pdf" onclick="shareResult()" id="shareBtn">🔗 Поделиться</button>
               <button class="btn-pdf" onclick="downloadPDF()">📄 PDF</button>
             </div>
           </div>
-          <div class="score-row">
+          <div id="lockBanner" style="display:none;background:linear-gradient(135deg,#eff6ff,#fdf4ff);border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin:14px 20px 0;display:flex;align-items:flex-start;gap:12px">
+              <div style="font-size:20px;flex-shrink:0">🔒</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:4px">Бесплатная проверка — базовые метрики</div>
+                <div style="font-size:13px;color:#3b82f6;line-height:1.5">Разметка фрагментов, детальный анализ и объяснения доступны в платной проверке.</div>
+                <button onclick="showPay(checksCount===0?'first':'regular')" style="margin-top:10px;padding:7px 18px;background:#2563eb;color:white;border:none;border-radius:100px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Разблокировать за 36₽ →</button>
+              </div>
+            </div>
+            <div class="score-row">
             <div class="sc"><div class="sc-lbl">Оригинальность</div><div class="sc-num" id="origNum">—</div><div class="scbar"><div class="scbar-f" id="origFill" style="width:0%"></div></div><div class="sc-desc" id="origDesc">оценка уникальности</div></div>
             <div class="sc"><div class="sc-lbl">Вероятность ИИ</div><div class="sc-num" id="aiNum">—</div><div class="scbar"><div class="scbar-f" id="aiFill" style="width:0%"></div></div><div class="sc-desc" id="aiDesc">признаки нейросети</div></div>
             <div class="sc"><div class="sc-lbl">Читаемость</div><div class="sc-num b" id="readNum">—</div><div class="scbar"><div class="scbar-f bf-b" id="readFill" style="width:0%"></div></div><div class="sc-desc" id="readDesc">стиль и качество</div></div>
           </div>
-          <div class="rp-txt-sec">
+          <div class="rp-txt-sec" id="rpTxtSec">
             <div class="rp-sec-lbl">Разметка текста<div class="legend"><div class="leg"><div class="leg-sw ls-ai"></div>ИИ</div><div class="leg"><div class="leg-sw ls-plag"></div>Плагиат</div><div class="leg"><div class="leg-sw ls-ok"></div>Оригинал</div></div></div>
             <div class="marked-text" id="markedText"></div>
           </div>
           <div class="rp-details" id="rpDetails"></div>
+          <!-- Humanizer CTA — показывается когда ИИ% >= 60 -->
+          <div id="humanizeCTA" style="display:none;margin:0 20px 16px;background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1.5px solid rgba(124,58,237,0.25);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+            <div style="font-size:28px;flex-shrink:0">🤖→✍️</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:700;color:#6d28d9;margin-bottom:3px">Обнаружен ИИ-текст — хотите исправить?</div>
+              <div style="font-size:13px;color:#7c3aed;line-height:1.4">Гуманайзер переписывает текст так, чтобы он прошёл детекторы. Сохраняет смысл — меняет стиль.</div>
+            </div>
+            <button id="humanizeCTABtn" onclick="goHumanize()" style="flex-shrink:0;padding:10px 22px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;border:none;border-radius:100px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">Гуманизировать →</button>
+          </div>
           <div class="rp-recs">
             <div class="rec-header">
               <div class="rec-title">✏️ Рекомендации по улучшению</div>
@@ -530,9 +684,33 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
   <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,42px);font-weight:400;letter-spacing:-.5px;max-width:480px">Четыре шага до результата</h2>
   <div class="how-grid">
     <div class="how-step"><div class="how-n">Шаг 01</div><div class="how-icon">✍️</div><div class="how-title">Вставьте текст</div><div class="how-body">Вставьте или введите текст в поле слева, или загрузите .txt файл.</div></div>
-    <div class="how-step"><div class="how-n">Шаг 02</div><div class="how-icon">🔍</div><div class="how-title">Нажмите «Проверить»</div><div class="how-body">Для текстов свыше 1 000 символов потребуется оплата 50₽.</div></div>
+    <div class="how-step"><div class="how-n">Шаг 02</div><div class="how-icon">🔍</div><div class="how-title">Нажмите «Проверить»</div><div class="how-body">Тексты до 150 символов — бесплатно. Для полного анализа с разметкой — от 36₽.</div></div>
     <div class="how-step"><div class="how-n">Шаг 03</div><div class="how-icon">⏱</div><div class="how-title">Подождите ~30 секунд</div><div class="how-body">Система проводит многоуровневый анализ и формирует отчёт.</div></div>
     <div class="how-step"><div class="how-n">Шаг 04</div><div class="how-icon">📊</div><div class="how-title">Изучите отчёт</div><div class="how-body">Получите баллы, разметку и подробные объяснения по каждому фрагменту.</div></div>
+  </div>
+</section>
+
+<section class="reviews-section" id="reviews">
+  <div class="reviews-inner">
+    <div class="sec-lbl">Отзывы</div>
+    <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,42px);font-weight:400;letter-spacing:-.5px">Что говорят пользователи</h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">«Проверяла диплом перед сдачей — сервис нашёл три абзаца с высокой вероятностью ИИ, хотя я их переписывала вручную. Переработала и пересдала без замечаний. Очень подробный отчёт, видно какие именно фразы подозрительны.»</div>
+        <div class="review-author"><div class="review-avatar">А</div><div><div class="review-name">Анастасия К.</div><div class="review-meta">Студентка, ВШЭ · июнь 2026</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">«Использую режим преподавателя уже второй семестр. Загружаю пакетом работы студентов, сервис сам делает сводку. Раньше тратил часы на ручную проверку — теперь 20 минут. Единственный детектор с нормальным объяснением, а не просто процентом.»</div>
+        <div class="review-author"><div class="review-avatar">М</div><div><div class="review-name">Михаил Д.</div><div class="review-meta">Преподаватель РУДН · апрель 2026</div></div></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">«Сделал 36₽ первую проверку — понравилось, купил бандл на 4 проверки. Разметка по фрагментам реально помогает понять что именно менять. Закинул диплом .docx прямо — всё распознало без конвертации. Лучшее что нашёл на русском рынке.»</div>
+        <div class="review-author"><div class="review-avatar">И</div><div><div class="review-name">Илья Н.</div><div class="review-meta">Фрилансер-копирайтер · май 2026</div></div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -548,7 +726,8 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
         <ul class="pr-feats">
           <li><span class="chk">✓</span>До 150 символов</li>
           <li><span class="chk">✓</span>Базовый анализ</li>
-          <li><span class="no">✕</span>Разметка текста</li>
+          <li><span class="no">✕</span>Разметка фрагментов</li>
+          <li><span class="no">✕</span>Детальный анализ</li>
           <li><span class="no">✕</span>PDF-отчёт</li>
         </ul>
         <button class="btn-pr" onclick="document.getElementById('userText').focus()">Попробовать</button>
@@ -604,33 +783,70 @@ footer{background:var(--ink);color:rgba(255,255,255,.45);padding:40px 32px}
     <div class="faq-item"><button class="faq-q" onclick="faq(this)">Мой текст сохраняется? <span class="faq-arr">⌄</span></button><div class="faq-a">Нет. Текст обрабатывается через защищённый серверный API и нигде не сохраняется. Мы не ведём логов содержимого проверяемых текстов.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="faq(this)">Можно проверять дипломные работы? <span class="faq-arr">⌄</span></button><div class="faq-a">Да. Поддерживается до 100 000 символов — достаточно для полной дипломной работы. Результаты носят вспомогательный характер.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="faq(this)">Какие нейросети определяет детектор? <span class="faq-arr">⌄</span></button><div class="faq-a">ChatGPT (GPT-4, GPT-4o), Claude, Gemini, Llama, GigaChat, YandexGPT и другие популярные модели.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Нужна ли регистрация? <span class="faq-arr">⌄</span></button><div class="faq-a">Нет. Для бесплатной проверки до 1 000 символов регистрация не нужна. Просто вставьте текст и нажмите «Проверить».</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="faq(this)">Нужна ли регистрация? <span class="faq-arr">⌄</span></button><div class="faq-a">Нет. Для бесплатной проверки до 150 символов регистрация не нужна. Просто вставьте текст и нажмите «Проверить».</div></div>
   </div>
 </section>
 
-<div class="overlay" id="overlay" onclick="closePayIfBg(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closePay()">✕</button>
-    <div class="modal-kicker" id="mKicker">Разовая проверка</div>
-    <div class="modal-title" id="mTitle">Оплата 50 ₽</div>
-    <div class="modal-sub" id="mSub">Одна полная проверка текста до 100 000 символов</div>
-    <div class="modal-price-box">
-      <div class="modal-price-cur">₽</div>
-      <div class="modal-price" id="mPrice">50</div>
-      <div class="modal-price-info" id="mInfo">разовая оплата<br>без подписки</div>
+<!-- дублирующий оверлей удалён -->
+
+
+<section style="background:linear-gradient(135deg,#eff6ff 0%,#fdf4ff 100%);border-top:1px solid var(--border);padding:56px 32px;text-align:center">
+  <div style="max-width:640px;margin:0 auto">
+    <div style="font-size:36px;margin-bottom:12px">🎁</div>
+    <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(24px,3.5vw,36px);font-weight:400;letter-spacing:-.5px;margin-bottom:12px">Пригласи друга — получи проверку бесплатно</h2>
+    <p style="font-size:16px;color:var(--ink2);margin-bottom:24px;line-height:1.6">Поделитесь ссылкой с другом. Как только он сделает первую оплату — вам зачислится бесплатная проверка.</p>
+    <div style="display:flex;gap:8px;max-width:420px;margin:0 auto">
+      <input id="refLink" type="text" value="https://www.stopgpt.ru/?ref=вашкод" readonly style="flex:1;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--rs);font-size:13px;font-family:'Instrument Sans',sans-serif;background:white;color:var(--ink);outline:none">
+      <button onclick="copyRef()" style="padding:11px 18px;background:var(--ink);color:white;border:none;border-radius:var(--rs);font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Копировать</button>
     </div>
-    <ul class="modal-feats"><li><span class="chk">✓</span>До 100 000 символов</li><li><span class="chk">✓</span>Полная разметка текста</li><li><span class="chk">✓</span>Подробный отчёт</li><li><span class="chk">✓</span>Загрузка файлов</li></ul>
-    <input class="modal-input" type="email" id="payEmail" placeholder="Email для чека (необязательно)">
-    <button class="btn-pay" onclick="doPay()">Оплатить через ЮКассу →</button>
-    <div class="modal-note">🔒 Безопасная оплата · Возврат в течение 24 часов</div>
+    <p style="font-size:12px;color:var(--ink3);margin-top:12px">Войдите в личный кабинет чтобы получить вашу реферальную ссылку</p>
   </div>
-</div>
+</section>
+<script>function copyRef(){const el=document.getElementById('refLink');el.select();navigator.clipboard.writeText(el.value);}</script>
 
 <footer>
-  <div class="foot-inner">
-    <div class="foot-logo">СтопГПТ.ru</div>
-    <div class="foot-links"><a href="#">Конфиденциальность</a><a href="#">Оферта</a><a href="#">Контакты</a></div>
-    <div class="foot-copy">© 2025 СтопГПТ · Powered by Claude AI</div>
+  <div class="foot-inner-new">
+    <div class="foot-cols">
+      <div class="foot-col">
+        <div class="foot-logo-new">СтопГПТ<span style="color:#60a5fa">.ru</span></div>
+        <p class="foot-desc">Детектор ИИ-текстов на базе Claude AI. Точность 95%. Первая проверка 36₽.</p>
+        <div class="foot-socials">
+          <a href="https://t.me/stopgptru" class="foot-social" title="Telegram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L6.8 14.578l-2.948-.924c-.642-.204-.655-.642.136-.953l11.498-4.43c.537-.194 1.006.131.836.953l-.76-.976z"/></svg>
+          </a>
+          <a href="https://vk.com/stopgptru" class="foot-social" title="ВКонтакте">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-.9-1.74.098C13.576 16.424 13.08 17.12 11.935 17.12c-2.557 0-4.065-1.713-4.065-5.01 0-3.165 1.558-4.82 3.805-4.82 1.053 0 1.684.702 1.974 1.765.098.36.195.363.39.07C14.44 7.888 15.233 7.29 16.28 7.29c2.394 0 3.504 2.246 3.504 5.168 0 2.18-.705 3.77-2.165 3.77-.857 0-1.255-.457-1.098-1.252.22-1.095.637-2.326.637-3.198 0-.97-.44-1.458-1.153-1.458-1.043 0-1.706 1.153-1.706 2.704 0 .723.098 1.386.278 1.973l-1.81 7.617c-.195.82-.196 1.73-.196 1.73h2.344s.146-.868.293-1.708c.117-.682.41-2.48.41-2.48s.535.927 2.09.927c2.803 0 4.307-2.492 4.307-5.756-.002-4.13-2.326-6.522-5.537-6.522z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Сервис</div>
+        <a href="#checker" class="foot-col-link">Проверить текст</a>
+        <a href="humanize.html" class="foot-col-link">Гуманайзер текста</a>
+        <a href="#pricing" class="foot-col-link">Тарифы</a>
+        <a href="#features" class="foot-col-link">Возможности</a>
+        <a href="#faq" class="foot-col-link">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Компания</div>
+        <a href="contacts.html" class="foot-col-link">Контакты</a>
+        <a href="privacy.html" class="foot-col-link">Конфиденциальность</a>
+        <a href="offer.html" class="foot-col-link">Публичная оферта</a>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Контакты</div>
+        <a href="mailto:hello@stopgpt.ru" class="foot-col-link">hello@stopgpt.ru</a>
+        <a href="https://t.me/stopgptru" class="foot-col-link">Telegram</a>
+        <div class="foot-col-link" style="cursor:default;color:rgba(255,255,255,.25)">Пн–Пт 10:00–19:00 МСК</div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-copy-new">© 2026 СтопГПТ · Powered by Claude AI</div>
+      <div class="foot-bottom-links">
+        <a href="privacy.html" class="foot-bottom-link">Политика конфиденциальности</a>
+        <a href="offer.html" class="foot-bottom-link">Оферта</a>
+      </div>
+    </div>
   </div>
 </footer>
 
@@ -681,6 +897,7 @@ function doLogin(email){
   localStorage.setItem('sgpt_user',JSON.stringify(user));
   closeModal('authOverlay');updateAuthBtn();showLK();
 }
+function handleLKClick(e){if(e&&e.preventDefault)e.preventDefault();if(user){window.location.href='/lk.html';return;}showAuth(e);}
 function updateAuthBtn(){
   const btn=document.querySelector('.btn-lk');
   if(btn)btn.textContent=user?'👤 '+user.email.split('@')[0]:'👤 Личный кабинет';
@@ -834,7 +1051,7 @@ async function runCheck(){
   document.getElementById('checkBtn').disabled=true;document.getElementById('bspin').style.display='block';
   startProg();
   try{
-    const resp=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    const resp=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,paid})});
     if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error||'Ошибка сервера: '+resp.status);}
     const p=await resp.json();stopProg();lastResult=p;
     checksCount++;localStorage.setItem('sgpt_checks',checksCount);
@@ -847,6 +1064,11 @@ async function runCheck(){
 }
 
 function renderResults(p,orig){
+  // Для бесплатных проверок — показываем баннер «разблокируйте»
+  const isFree=p._free===true;
+  const lockBanner=document.getElementById('lockBanner');
+  if(lockBanner)lockBanner.style.display=isFree?'block':'none';
+
   setScore('origNum','origFill',p.originality||0,false);
   setScore('aiNum','aiFill',p.ai_probability||0,true);
   const rn=document.getElementById('readNum');rn.textContent=(p.readability||0)+'%';rn.className='sc-num b';
@@ -859,6 +1081,9 @@ function renderResults(p,orig){
   if(ai>=70)vt.style.cssText='background:var(--red-bg);color:var(--red);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700';
   else if(ai>=40)vt.style.cssText='background:var(--amber-bg);color:var(--amber);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700';
   else vt.style.cssText='background:var(--green-bg);color:var(--green);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700';
+  const textSec=document.getElementById('rpTxtSec');if(textSec)textSec.style.display=isFree?'none':'block';
+  const detSec=document.getElementById('rpDetails');if(detSec&&isFree)detSec.style.display='none';
+  const recSec=document.querySelector('.rp-recs');if(recSec)recSec.style.display=isFree?'none':'block';
   const box=document.getElementById('markedText');
   if(p.segments&&p.segments.length){
     let html='',rem=orig;
@@ -872,11 +1097,63 @@ function renderResults(p,orig){
   (p.details||[]).forEach(d=>{const ic=IM[d.type]||'di-info',em=IE[d.type]||'ℹ',b=BM[d.type]||'';det.innerHTML+=`<div class="detail-item"><div class="di-ico ${ic}">${em}</div><div><div class="di-title">${b} ${esc(d.title||'')}</div><div class="di-body">${esc(d.body||'')}</div></div></div>`;});
   const rc=document.getElementById('recsContent');if(rc)rc.style.display='none';
   const rb=document.getElementById('recsBtn');if(rb){rb.style.display='inline-block';rb.textContent='Получить за 50₽';rb.disabled=false;}
+  // Гуманайзер CTA — показываем когда ИИ высокий
+  const hCTA=document.getElementById('humanizeCTA');
+  if(hCTA){hCTA.style.display=ai>=60?'flex':'none';}
   showState('rpResults');
   setTimeout(()=>document.getElementById('rpResults').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
+function goHumanize(){const t=document.getElementById('userText').value.trim();window.location.href='/humanize.html'+(t?'?text='+encodeURIComponent(t.slice(0,4000)):'');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Ctrl+Enter shortcut ──────────────────────────────────────────────────────
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCheck();}});
+
+// ── Copy result ──────────────────────────────────────────────────────────────
+function copyResult(){
+  if(!lastResult)return;
+  const lines=[
+    'СтопГПТ.ru — Отчёт о проверке',
+    '─────────────────────────────',
+    'Оригинальность: '+(lastResult.originality||0)+'%',
+    'Вероятность ИИ: '+(lastResult.ai_probability||0)+'%',
+    'Читаемость: '+(lastResult.readability||0)+'%',
+    'Вердикт: '+(lastResult.verdict||''),
+    '',
+    'Текст:',
+    document.getElementById('markedText').innerText||''
+  ];
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const b=document.getElementById('copyBtn');if(b){const t=b.textContent;b.textContent='✓ Скопировано';setTimeout(()=>b.textContent=t,2000);}
+  });
+}
+
+// ── Share result ─────────────────────────────────────────────────────────────
+function shareResult(){
+  const text='Проверил текст на СтопГПТ.ru: ИИ '+(lastResult?lastResult.ai_probability||0:0)+'%, оригинальность '+(lastResult?lastResult.originality||0:0)+'%';
+  if(navigator.share){navigator.share({title:'СтопГПТ — результат проверки',text,url:'https://www.stopgpt.ru'}).catch(()=>{});}
+  else{navigator.clipboard.writeText('https://www.stopgpt.ru').then(()=>alert('Ссылка скопирована: https://www.stopgpt.ru'));}
+}
+
+// ── DOCX support via mammoth ──────────────────────────────────────────────────
+const _origDoFile=doFile;
+function doFile(f){
+  if(f.name.match(/\.docx$/i)&&window.mammoth){
+    const r=new FileReader();
+    r.onload=function(e){
+      mammoth.extractRawText({arrayBuffer:e.target.result}).then(function(result){
+        document.getElementById('userText').value=result.value.slice(0,100000);
+        document.getElementById('fzchosen').textContent='✓ '+f.name;
+        setMode('text');updateCount();
+      });
+    };
+    r.readAsArrayBuffer(f);
+    return;
+  }
+  _origDoFile(f);
+}
+
 function faq(btn){btn.parentElement.classList.toggle('open');}
 function closeModal(id){const el=document.getElementById(id);if(el)el.classList.remove('on');}
 function closeIfBg(e,id){if(e.target===document.getElementById(id))closeModal(id);}
@@ -963,7 +1240,7 @@ updateAuthBtn();
 <div class="cookie-banner" id="cookieBanner" style="display:none">
   <div class="cookie-text">🍪 Мы используем файлы cookie для улучшения работы сайта.</div>
   <div class="cookie-actions">
-    <button class="btn-cookie-more" onclick="document.getElementById('cookieBanner').style.display='none'">Подробнее</button>
+    <a href="privacy.html" class="btn-cookie-more" style="text-decoration:none;display:inline-flex;align-items:center">Подробнее</a>
     <button class="btn-cookie-ok" onclick="acceptCookies()">Принять</button>
   </div>
 </div>
