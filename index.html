@@ -606,7 +606,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.45)}
               <div>
                 <div style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:4px">Бесплатная проверка — базовые метрики</div>
                 <div style="font-size:13px;color:#3b82f6;line-height:1.5">Разметка фрагментов, детальный анализ и объяснения доступны в платной проверке.</div>
-                <button onclick="showPay(checksCount===0?'first':'regular')" style="margin-top:10px;padding:7px 18px;background:#2563eb;color:white;border:none;border-radius:100px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Разблокировать за 36₽ →</button>
+                <button onclick="showPay(paidChecksCount===0?'first':'regular')" style="margin-top:10px;padding:7px 18px;background:#2563eb;color:white;border:none;border-radius:100px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Разблокировать за 36₽ →</button>
               </div>
             </div>
             <div class="score-row">
@@ -857,6 +857,7 @@ const DEMO=`Национальный исследовательский унив
 
 let paid=localStorage.getItem('sgpt_paid')==='1';
 let checksCount=parseInt(localStorage.getItem('sgpt_checks')||'0');
+let paidChecksCount=parseInt(localStorage.getItem('sgpt_paid_count')||'0');
 let user=JSON.parse(localStorage.getItem('sgpt_user')||'null');
 let payType='first';
 let lastResult=null;
@@ -1007,6 +1008,7 @@ function showPay(type){
 }
 function doPay(){
   paid=true;localStorage.setItem('sgpt_paid','1');
+  paidChecksCount++;localStorage.setItem('sgpt_paid_count',paidChecksCount);
   closeModal('payOverlay');
   if(payType==='recs'){generateRecs();return;}
   runCheck();
@@ -1046,7 +1048,7 @@ function downloadPDF(){
 async function runCheck(){
   const text=document.getElementById('userText').value.trim();
   if(text.length<30){showState('rpError');document.getElementById('errMsg').textContent='Текст слишком короткий. Введите не менее 30 символов.';return;}
-  if(text.length>150&&!paid){showPay(checksCount===0?'first':'regular');return;}
+  if(text.length>150&&!paid){showPay(paidChecksCount===0?'first':'regular');return;}
   showState('rpProgress');
   document.getElementById('checkBtn').disabled=true;document.getElementById('bspin').style.display='block';
   startProg();
