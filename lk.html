@@ -265,7 +265,24 @@ function initLK() {
   document.getElementById('lkEmail').textContent = user.email;
   document.getElementById('settEmail').textContent = user.email;
 
-  const joined = user.joined || Date.now();
+  // Берём самую раннюю дату: из профиля или из истории проверок
+  const hist = JSON.parse(localStorage.getItem('sgpt_history') || '[]');
+  let earliestFromHist = Infinity;
+  hist.forEach(h => {
+    if (h.ts && h.ts < earliestFromHist) earliestFromHist = h.ts;
+    else if (h.date) {
+      // парсим дату вида "29.06.2026"
+      const parts = h.date.split('.');
+      if (parts.length === 3) {
+        const d = new Date(+parts[2], +parts[1]-1, +parts[0]);
+        if (!isNaN(d) && d.getTime() < earliestFromHist) earliestFromHist = d.getTime();
+      }
+    }
+  });
+  const joinedRaw = user.joined || Date.now();
+  const joined = earliestFromHist < joinedRaw ? earliestFromHist : joinedRaw;
+  // Сохраняем правильную дату обратно
+  if (joined < joinedRaw) { user.joined = joined; localStorage.setItem('sgpt_user', JSON.stringify(user)); }
   const days = Math.max(1, Math.floor((Date.now() - joined) / 86400000));
   const joinDate = new Date(joined).toLocaleDateString('ru-RU', {day:'numeric',month:'long',year:'numeric'});
   document.getElementById('lkSince').textContent = 'На сервисе с ' + joinDate;
