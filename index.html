@@ -601,7 +601,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.45)}
               <button class="btn-pdf" onclick="downloadPDF()">📄 PDF</button>
             </div>
           </div>
-          <div id="lockBanner" style="display:none;background:linear-gradient(135deg,#f5f3ff,#fdf4ff);border:1px solid #ddd6fe;border-radius:10px;padding:16px 20px;margin:14px 20px 0;display:flex;align-items:flex-start;gap:12px">
+          <div id="lockBanner" style="display:none;background:linear-gradient(135deg,#f5f3ff,#fdf4ff);border:1px solid #ddd6fe;border-radius:10px;padding:16px 20px;margin:14px 20px 0;align-items:flex-start;gap:12px">
               <div style="font-size:20px;flex-shrink:0">🔒</div>
               <div>
                 <div style="font-size:14px;font-weight:700;color:#5b21b6;margin-bottom:4px">Бесплатная проверка — базовые метрики</div>
@@ -1102,7 +1102,7 @@ function renderResults(p,orig){
   // Для бесплатных проверок — показываем баннер «разблокируйте»
   const isFree=p._free===true;
   const lockBanner=document.getElementById('lockBanner');
-  if(lockBanner)lockBanner.style.display=isFree?'block':'none';
+  if(lockBanner)lockBanner.style.display=isFree?'flex':'none';
 
   setScore('origNum','origFill',p.originality||0,false);
   setScore('aiNum','aiFill',p.ai_probability||0,true);
