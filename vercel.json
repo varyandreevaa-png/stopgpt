@@ -1,5 +1,24 @@
 {
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/humanize",
+      "destination": "/humanize.html"
+    },
+    {
+      "source": "/lk",
+      "destination": "/lk.html"
+    },
+    {
+      "source": "/offer",
+      "destination": "/offer.html"
+    },
+    {
+      "source": "/contacts",
+      "destination": "/contacts.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    }
   ]
 }
