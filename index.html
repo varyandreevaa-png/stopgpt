@@ -894,7 +894,10 @@ async function verifyCode(){
   }catch(e){doLogin(email);}
 }
 function doLogin(email){
-  user={email,name:email.split('@')[0],joined:Date.now(),balance:0};
+  const existing=JSON.parse(localStorage.getItem('sgpt_user')||'null');
+  const joined=(existing&&existing.email===email&&existing.joined)?existing.joined:Date.now();
+  const balance=(existing&&existing.email===email)?existing.balance||0:0;
+  user={email,name:email.split('@')[0],joined,balance};
   localStorage.setItem('sgpt_user',JSON.stringify(user));
   closeModal('authOverlay');updateAuthBtn();showLK();
 }
